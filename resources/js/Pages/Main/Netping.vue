@@ -41,8 +41,6 @@
                         <th
                             class="p-3 font-bold uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400 text-gray-600 border border-gray-300 hidden lg:table-cell">
                             T°</th>
-
-
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-600">
@@ -60,26 +58,38 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            {{ power[index] === undefined ? 'Обновляю...' : power[index][2] }}
-                                <span
-                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Питание</span>
-                        </td>
-                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            {{ secure.secure_data === undefined ? 'Обновляю' : secure.secure_data[index] }}
-                                <span
-                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Охрана</span>
-                        </td>
-                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-
-                                {{ door[index] === undefined ? 'Обновляю...' : door[index][2] }}
-
-                                <span
-                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Дверь</span>
-                        </td>
-                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                                {{ alarm.alarm_data === undefined ? 'Обновляю...' : alarm.alarm_data[index][2] }}
+                            <span v-if="power[index] === undefined">Обновляю...</span>
+                            <div v-else>
+                                <Success v-if="power[index][2] === '0'" > 220 V </Success>
+                            </div>
                             <span
-                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Сирена</span>
+                                class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Питание</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            <span v-if="secure.secure_data === undefined">Обновляю...</span>
+                            <div v-else>
+                                <Success v-if="secure.secure_data[index] === '1' || secure.secure_data[index] === '2'" > Включена </Success>
+                            </div>
+                            <span
+                                class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Охрана</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+
+                            <span v-if="door[index] === undefined">Обновляю...</span>
+                            <div v-else>
+                                <Success v-if="door[index][2] === '0'" > Закрыта </Success>
+                            </div>
+
+                            <span
+                                class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Дверь</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            <span v-if="alarm.alarm_data === undefined">Обновляю...</span>
+                            <div v-else>
+                                <Success v-if="alarm.alarm_data[index][2] === '0' || alarm.alarm_data[index][2] === '1'" > Отключена </Success>
+                            </div>
+                            <span
+                                class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Сирена</span>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                             {{ point.ip }}
@@ -118,6 +128,7 @@ import { Head } from '@inertiajs/vue3';
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
+import Success from "@/Components/States/Success.vue";
 import {onMounted, ref} from "vue";
 
 defineProps({
@@ -131,6 +142,9 @@ onMounted(async () => {
     await doorState();
     await alarmState();
 })
-//setInterval(powerState, 2000)
+setInterval(powerState, 20000);
+setInterval(secureState, 20000);
+setInterval(doorState, 20000);
+setInterval(alarmState, 20000);
 //setInterval(async () => router.reload({ only: ['netping'] }), 3000);
 </script>
