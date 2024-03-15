@@ -1,9 +1,3 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-</script>
-
 <template>
     <Head title="Netping" />
 
@@ -52,10 +46,10 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-600">
-                    <tr>
+                    <tr v-for="point in netping.data">
                         <td
                             class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-
+                            {{ point.name }}
                             <a href="#">
                                 <svg style="float:right; display:inline-block; width: 10%;"
                                      xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
@@ -65,6 +59,46 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
                                 </svg>
                             </a>
                         </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                                <span
+                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Питание</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                                <span
+                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Охрана</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                                <span
+                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Дверь</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                                <span
+                                    class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Сирена</span>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            {{ point.ip }}
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            Снять с охраны
+                        </td>
+                        <td
+                            class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-300 border border-b text-left block lg:table-cell relative lg:static">
+                            <a v-if="point.camera_ip" href="#" data-bs-toggle="modal" data-bs-target="#cam_popup" id="cam_link">
+                                <svg
+                                    style="margin-left:auto; margin-right:auto; display:block;"
+                                    xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </a>
+                        </td>
+                        <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            0
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -72,3 +106,14 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
         </div>
     </AuthenticatedLayout>
 </template>
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { router } from "@inertiajs/vue3";
+
+defineProps({
+    netping: Object
+})
+//setInterval(async () => router.reload({ only: ['netping'] }), 3000);
+</script>

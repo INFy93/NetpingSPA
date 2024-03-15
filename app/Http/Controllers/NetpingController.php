@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NetpingResource;
+use App\Models\Netping;
 use Illuminate\Http\Request;
 
 class NetpingController extends Controller
@@ -11,7 +13,11 @@ class NetpingController extends Controller
      */
     public function index()
     {
-        //
+        $netping = NetpingResource::collection(
+            Netping::all()
+        );
+
+        return inertia('Main/Netping', compact('netping'));
     }
 
     /**
