@@ -15,9 +15,9 @@ Route::get('/',  function () {
     }
 })->name('enter');
 
-Route::get('/netping', function () {
-    return Inertia::render('Main/Netping');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->group( function () {
+   Route::resource('netping', \App\Http\Controllers\NetpingController::class);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
