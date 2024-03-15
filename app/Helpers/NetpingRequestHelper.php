@@ -13,14 +13,13 @@ function get_power_state($netping_ips)
     //состояние питания
     $p_state = [];
     $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        $i = 0;
         foreach ($netping_ips as $power) {
             try {
                 $pool
                     ->timeout(env("NETPING_TIMEOUT"))
                     ->get($power->power_state);
             } catch (ConnectionException $exp) {
-                $p_state[$i][2] = "3";
+                $p_state[] = "3";
             }
         }
     });
@@ -40,7 +39,7 @@ function get_door_state($netping_ips)
             try {
                 $pool->timeout(env("NETPING_TIMEOUT"))->get($door->door_state);
             } catch (ConnectionException $exp) {
-                $d_state[$i][2] = "3";
+                $d_state[] = "3";
             }
         }
     });
@@ -55,14 +54,13 @@ function get_alarm_state($netping_ips)
     //состояние сирены
     $a_state = [];
     $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        $i = 0;
         foreach ($netping_ips as $alram) {
             try {
                 $pool
                     ->timeout(env("NETPING_TIMEOUT"))
                     ->get($alram->alarm_state);
             } catch (ConnectionException $exp) {
-                $a_state[$i][2] = "3";
+                $a_state[] = "3";
             }
         }
     });
@@ -83,7 +81,7 @@ function get_netping_state($netping_ips)
                     ->timeout(env("NETPING_TIMEOUT"))
                     ->get($secure->netping_state);
             } catch (ConnectionException $exp) {
-                $a_state[$i][2] = "3";
+                $a_state[] = "3";
             }
         }
     });
