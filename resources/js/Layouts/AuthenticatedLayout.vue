@@ -5,9 +5,19 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import DarkModeSwitcher from "@/Components/DarkModeSwitcher.vue";
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+const isDark = ref();
+isDark.value = localStorage.getItem("darkMode") == "true";
+
+function toggleDarkMode() {
+    isDark.value = !isDark.value;
+    localStorage.setItem("darkMode", isDark.value);
+}
+
 </script>
 
 <template>
@@ -64,13 +74,14 @@ const showingNavigationDropdown = ref(false);
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')"> Профиль </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
+                                            Выйти
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
                             </div>
+                            <DarkModeSwitcher />
                         </div>
 
                         <!-- Hamburger -->
