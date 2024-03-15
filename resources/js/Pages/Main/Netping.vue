@@ -46,7 +46,7 @@
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-600">
-                    <tr v-for="point in netping.data">
+                    <tr v-for="(point, index) in netping.data">
                         <td
                             class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
                             {{ point.name }}
@@ -60,19 +60,25 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            {{ power[index] === undefined ? 'Обновляю...' : power[index][2] }}
                                 <span
                                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Питание</span>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+                            {{ secure.secure_data === undefined ? 'Обновляю' : secure.secure_data[index] }}
                                 <span
                                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Охрана</span>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+
+                                {{ door[index] === undefined ? 'Обновляю...' : door[index][2] }}
+
                                 <span
                                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Дверь</span>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                                <span
+                                {{ alarm.alarm_data === undefined ? 'Обновляю...' : alarm.alarm_data[index][2] }}
+                            <span
                                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Сирена</span>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
@@ -111,9 +117,20 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
+import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
+import {onMounted, ref} from "vue";
 
 defineProps({
     netping: Object
 })
+const { powerState, doorState, alarmState, secureState, power, door, alarm, secure } = useNetpingStates();
+
+onMounted(async () => {
+    await powerState();
+    await secureState();
+    await doorState();
+    await alarmState();
+})
+//setInterval(powerState, 2000)
 //setInterval(async () => router.reload({ only: ['netping'] }), 3000);
 </script>
