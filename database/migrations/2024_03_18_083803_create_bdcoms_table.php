@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('bdcoms', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('bdcom_name');
+            $table->ipAddress('bdcom_ip');
+            $table->integer('netping_ip');
         });
     }
 
