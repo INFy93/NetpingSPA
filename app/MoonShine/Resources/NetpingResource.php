@@ -22,6 +22,8 @@ class NetpingResource extends ModelResource
 
     protected string $title = 'Точки';
 
+    public string $column = 'name';
+
     protected string $sortDirection = 'ASC';
 
     protected bool $createInModal = true;
