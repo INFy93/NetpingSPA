@@ -5,9 +5,10 @@ export default function useNetpingStates() {
     const door = ref([]);
     const alarm = ref([]);
     const secure = ref([]);
-    const powerState = async() => {
-       let response = await axios.get('/api/power');
-       power.value = response.data
+    const powerState = async () => {
+        let response = await axios.get('/api/power');
+
+        power.value = response.data;
     }
 
     const doorState = async() => {

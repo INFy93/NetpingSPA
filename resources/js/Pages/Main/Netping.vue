@@ -58,9 +58,12 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
+
                             <span v-if="power[index] === undefined">Обновляю...</span>
                             <div v-else>
-                                <Success v-if="power[index][2] === '0'" > 220 V </Success>
+                                <Success v-if="power[index][2] === '0'">220V</Success>
+                                <Danger v-else-if="power[index][2] === '1'">220V OFF</Danger>
+                                <NoData v-else-if="power[index][2] === '3'">N/A</NoData>
                             </div>
                             <span
                                 class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Питание</span>
@@ -68,7 +71,9 @@
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                             <span v-if="secure.secure_data === undefined">Обновляю...</span>
                             <div v-else>
-                                <Success v-if="secure.secure_data[index] === '1' || secure.secure_data[index] === '2'" > Включена </Success>
+                                <Success v-if="secure.secure_data[index] === '1' || secure.secure_data[index] === 'direction:2'" > Включена </Success>
+                                <Danger v-else-if="secure.secure_data[index] === '0' || secure.secure_data[index] === 'direction:1'">Отключена</Danger>
+                                <NoData v-else-if="secure.secure_data[index] === '3'">N/A</NoData>
                             </div>
                             <span
                                 class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Охрана</span>
@@ -77,7 +82,9 @@
 
                             <span v-if="door[index] === undefined">Обновляю...</span>
                             <div v-else>
-                                <Success v-if="door[index][2] === '0'" > Закрыта </Success>
+                                <Success v-if="door[index][2] === '0'" >Закрыта</Success>
+                                <Danger v-else-if="door[index][2] === '1'">Открыта!</Danger>
+                                <NoData v-else-if="door[index][2] === '3'">N/A</NoData>
                             </div>
 
                             <span
@@ -86,7 +93,9 @@
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                             <span v-if="alarm.alarm_data === undefined">Обновляю...</span>
                             <div v-else>
-                                <Success v-if="alarm.alarm_data[index][2] === '0' || alarm.alarm_data[index][2] === '1'" > Отключена </Success>
+                                <Success v-if="(alarm.revision[index] === 2 && alarm.alarm_data[index][2] === '1') || (alarm.revision[index] === 4 && alarm.alarm_data[index][2] === '0')" >Отключена</Success>
+                                <Danger v-else-if="(alarm.revision[index] === 2 && alarm.alarm_data[index][2] === '0') || (alarm.revision[index] === 4 && alarm.alarm_data[index][2] === '1')">ALARM!!!</Danger>
+                                <NoData v-else-if="alarm.alarm_data[index][2] === '3'">N/A</NoData>
                             </div>
                             <span
                                 class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Сирена</span>
@@ -129,6 +138,8 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import Success from "@/Components/States/Success.vue";
+import Danger from "@/Components/States/Danger.vue";
+import NoData from "@/Components/States/NoData.vue";
 import {onMounted, ref} from "vue";
 
 defineProps({
