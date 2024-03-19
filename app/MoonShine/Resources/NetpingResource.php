@@ -22,6 +22,14 @@ class NetpingResource extends ModelResource
 
     protected string $title = 'Точки';
 
+    protected string $sortDirection = 'ASC';
+
+    protected bool $createInModal = true;
+
+    protected bool $editInModal = true;
+
+    protected bool $detailInModal = true;
+
     public function fields(): array
     {
         return [
