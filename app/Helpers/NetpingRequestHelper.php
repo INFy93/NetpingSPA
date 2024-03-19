@@ -42,7 +42,7 @@ function get_door_state($netping_ips)
     $d_state = [];
     $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
         foreach ($netping_ips as $door) {
-            $pool->timeout(env("NETPING_TIMEOUT"))
+            $pool
                 ->withOptions([
                     'connect_timeout' => 0.1
                 ])
