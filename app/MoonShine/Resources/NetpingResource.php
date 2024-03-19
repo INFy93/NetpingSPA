@@ -7,6 +7,7 @@ namespace App\MoonShine\Resources;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Netping;
 
+use MoonShine\ActionButtons\ActionButton;
 use MoonShine\Fields\Relationships\HasMany;
 use MoonShine\Resources\ModelResource;
 use MoonShine\Decorations\Block;
@@ -38,7 +39,10 @@ class NetpingResource extends ModelResource
             Block::make([
                 ID::make()->sortable(),
                 Text::make('Название', 'name'),
-
+                HasMany::make('BDCOM', 'bdcoms', resource: new BdcomResource())
+                    ->fields([
+                        Text::make('IP', 'bdcom_ip')
+                    ])
             ]),
         ];
     }

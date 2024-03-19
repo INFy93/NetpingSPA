@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Bdcom extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     public function netping(): BelongsTo
     {
-        return $this->belongsTo(Netping::class, 'bdcom_id', 'id');
+        return $this->belongsTo(Netping::class);
     }
 }
