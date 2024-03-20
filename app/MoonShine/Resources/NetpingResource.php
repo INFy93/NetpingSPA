@@ -39,6 +39,7 @@ class NetpingResource extends ModelResource
             Block::make([
                 ID::make()->sortable(),
                 Text::make('Название', 'name'),
+                Text::make('IP', 'ip'),
                 HasMany::make('BDCOM', 'bdcoms', resource: new BdcomResource())
                     ->fields([
                         Text::make('IP', 'bdcom_ip')

@@ -42,6 +42,11 @@ class BdcomResource extends ModelResource
         ];
     }
 
+    public function redirectAfterSave(): string
+    {
+        return '/admin/resource/bdcom-resource/index-page';
+    }
+
     public function rules(Model $item): array
     {
         return [];
