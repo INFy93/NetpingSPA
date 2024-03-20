@@ -32,6 +32,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
     Route::get('/door', [NetpingApiController::class, 'get_door_data']);
     Route::get('/alarm', [NetpingApiController::class, 'get_alarm_data']);
     Route::get('/alarm/set/{id}', [NetpingApiController::class, 'set_alarm']);
+
+    Route::get('/bdcoms_current_temp', [\App\Http\Controllers\Api\BdcomApiController::class, 'getBdcomCurrentTemperature']);
    // Route::get('/netping_camera/{id}', [CameraController::class, 'getCamera']);
 
     //Route::get('/temp/{id}', [\App\Http\Controllers\Api\BdcomController::class, 'getTemperature']);
