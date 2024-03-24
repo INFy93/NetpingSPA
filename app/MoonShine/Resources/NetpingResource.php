@@ -43,7 +43,8 @@ class NetpingResource extends ModelResource
                 HasMany::make('BDCOM', 'bdcoms', resource: new BdcomResource())
                     ->fields([
                         Text::make('IP', 'bdcom_ip')
-                    ])
+                    ]),
+                Text::make('Камера', 'camera_ip'),
             ]),
         ];
     }

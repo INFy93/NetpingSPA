@@ -122,7 +122,7 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            0
+                            <span v-if="temps[index] !== undefined && index === temps[point.bdcom_id]">{{ temps[point.bdcom_id]  }}</span>
                         </td>
                     </tr>
                     </tbody>
@@ -137,6 +137,7 @@ import { Head } from '@inertiajs/vue3';
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
+import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
@@ -146,12 +147,14 @@ defineProps({
     netping: Object
 })
 const { powerState, doorState, alarmState, secureState, power, door, alarm, secure } = useNetpingStates();
+const { temps, getBdcomTemps } = useBdcomTemperatures();
 
 onMounted(async () => {
     await powerState();
     await secureState();
     await doorState();
     await alarmState();
+    await getBdcomTemps();
 })
 setInterval(powerState, 20000);
 setInterval(secureState, 20000);
