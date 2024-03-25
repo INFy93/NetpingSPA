@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
 
-function get_power_state($netping_ips)
+function get_power_state($netping_ips): array
 {
     //состояние питания
     $p_state = [];
@@ -36,7 +36,7 @@ function get_power_state($netping_ips)
     return $p_state;
 }
 
-function get_door_state($netping_ips)
+function get_door_state($netping_ips): array
 {
     //состояние двери
     $d_state = [];
@@ -65,7 +65,7 @@ function get_door_state($netping_ips)
     return $d_state;
 }
 
-function get_alarm_state($netping_ips)
+function get_alarm_state($netping_ips): array
 {
     //состояние сирены
     $a_state = [];
@@ -92,7 +92,7 @@ function get_alarm_state($netping_ips)
     return $a_state;
 }
 
-function get_netping_state($netping_ips)
+function get_netping_state($netping_ips): array
 {
     $s_state = [];
     $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
