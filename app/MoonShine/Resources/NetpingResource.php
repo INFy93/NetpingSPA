@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Netping;
 
 use MoonShine\ActionButtons\ActionButton;
 use MoonShine\Fields\Relationships\HasMany;
+use MoonShine\QueryTags\QueryTag;
 use MoonShine\Resources\ModelResource;
 use MoonShine\Decorations\Block;
 use MoonShine\Fields\ID;
@@ -48,6 +50,7 @@ class NetpingResource extends ModelResource
             ]),
         ];
     }
+
 
     public function rules(Model $item): array
     {

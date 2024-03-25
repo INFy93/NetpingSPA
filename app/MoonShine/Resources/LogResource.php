@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Log;
 
@@ -11,6 +12,7 @@ use MoonShine\Fields\DateRange;
 use MoonShine\Fields\Relationships\BelongsTo;
 use MoonShine\Fields\Relationships\HasOne;
 use MoonShine\Fields\Text;
+use MoonShine\QueryTags\QueryTag;
 use MoonShine\Resources\ModelResource;
 use MoonShine\Decorations\Block;
 use MoonShine\Fields\ID;
@@ -33,6 +35,8 @@ class LogResource extends ModelResource
     protected bool $detailInModal = true;
 
     protected bool $isAsync = true;
+
+    protected int $itemsPerPage = 10; // Number of elements per page
 
     public function getActiveActions(): array
     {
@@ -60,6 +64,7 @@ class LogResource extends ModelResource
             DateRange::make('Даты', 'created_at'),
         ];
     }
+
     public function rules(Model $item): array
     {
         return [];
