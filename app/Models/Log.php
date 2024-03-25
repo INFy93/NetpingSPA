@@ -11,6 +11,12 @@ class Log extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'netping_id',
+        'action_id'
+    ];
+
     public function netping(): BelongsTo
     {
         return $this->belongsTo(Netping::class);
