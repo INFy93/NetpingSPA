@@ -122,7 +122,10 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            <span v-if="temps[index] !== undefined && index === temps[point.bdcom_id]">{{ temps[point.bdcom_id]  }}</span>
+                            <span v-if="temps[index] !== undefined">{{ temps[index]['netping_id'] === point.id ? temps[index]['bdcom1_temp'] : ''  }}</span>
+                            <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id && temps[index]['bdcom2_temp']">
+                                / {{ temps[index]['bdcom2_temp'] }}
+                            </span>
                         </td>
                     </tr>
                     </tbody>

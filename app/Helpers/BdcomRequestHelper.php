@@ -53,5 +53,5 @@ function getBdcomTemp($bdcoms): array
         }
     }
 
-    return $temps;
+    return array_values($temps);
 }

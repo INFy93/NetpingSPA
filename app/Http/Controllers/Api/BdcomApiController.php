@@ -15,11 +15,6 @@ class BdcomApiController extends Controller
 
         $temps = getBdcomTemp($bdcoms);
 
-        foreach ($bdcoms as $b)
-        {
-            $b->temps = $temps;
-        }
-        dd($bdcoms);
-        return response()->json($bdcoms)->getData();
+        return response()->json($temps)->getData();
     }
 }
