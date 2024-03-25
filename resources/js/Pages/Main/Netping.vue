@@ -122,9 +122,16 @@
                             </a>
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id">{{ temps[index]['bdcom1_temp'] }}</span>
+                            <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id">
+                                <NormalTemp v-if="temps[index]['bdcom1_temp'] <= 69">{{ temps[index]['bdcom1_temp'] }}</NormalTemp>
+                                <WarningTemp v-else-if="temps[index]['bdcom1_temp'] >= 70 && temps[index]['bdcom1_temp'] <= 74">{{ temps[index]['bdcom1_temp'] }}</WarningTemp>
+                                <DangerTemp v-else-if="temps[index]['bdcom1_temp'] >= 75">{{temps[index]['bdcom1_temp']}}</DangerTemp>
+                            </span>
                             <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id && temps[index]['bdcom2_temp']">
-                                / {{ temps[index]['bdcom2_temp'] }}
+                                /
+                                <NormalTemp v-if="temps[index]['bdcom2_temp'] <= 69">{{ temps[index]['bdcom2_temp'] }}</NormalTemp>
+                                <WarningTemp v-else-if="temps[index]['bdcom2_temp'] >= 70 && temps[index]['bdcom2_temp'] <= 74">{{ temps[index]['bdcom2_temp'] }}</WarningTemp>
+                                <DangerTemp v-else-if="temps[index]['bdcom2_temp'] >= 75">{{temps[index]['bdcom2_temp']}}</DangerTemp>
                             </span>
                         </td>
                     </tr>
@@ -144,7 +151,10 @@ import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperatur
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
-import {onMounted, ref} from "vue";
+import {onMounted} from "vue";
+import NormalTemp from "@/Components/Temperatures/NormalTemp.vue";
+import WarningTemp from "@/Components/Temperatures/WarningTemp.vue";
+import DangerTemp from "@/Components/Temperatures/DangerTemp.vue";
 
 defineProps({
     netping: Object
