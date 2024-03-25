@@ -24,13 +24,13 @@ function getBdcomTemp($bdcoms): array
         if (!$r instanceof ConnectionException) {
             if (($i - 1) >= 0 && $bdcoms[$i]->netping_id == $bdcoms[$i-1]->netping_id)
             {
-                $temps[$i]['bdcom1_temp'] = $temps[$i - 1]['bdcom1_temp'];
-                $temps[$i]['bdcom2_temp'] = str_replace("\n","", $r->body());
+                $temps[$i]['bdcom1_temp'] = intval($temps[$i - 1]['bdcom1_temp']);
+                $temps[$i]['bdcom2_temp'] = intval(str_replace("\n","", $r->body()));
                 $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
                 unset($temps[$i - 1]);
             } else
             {
-                $temps[$i]['bdcom1_temp'] = str_replace("\n","", $r->body());
+                $temps[$i]['bdcom1_temp'] = intval(str_replace("\n","", $r->body()));
                 $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
             }
 
@@ -39,13 +39,13 @@ function getBdcomTemp($bdcoms): array
         {
             if (($i - 1) >= 0 && $bdcoms[$i]->netping_id == $bdcoms[$i-1]->netping_id)
             {
-                $temps[$i]['bdcom1_temp'] = '0';
-                $temps[$i]['bdcom2_temp'] = '0';
+                $temps[$i]['bdcom1_temp'] = 0;
+                $temps[$i]['bdcom2_temp'] = 0;
                 $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
                 unset($temps[$i - 1]);
             } else
             {
-                $temps[$i]['bdcom1_temp'] = '0';
+                $temps[$i]['bdcom1_temp'] = 0;
                 $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
             }
 
