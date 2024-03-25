@@ -34,6 +34,11 @@ class LogResource extends ModelResource
 
     protected bool $isAsync = true;
 
+    public function getActiveActions(): array
+    {
+        return ['delete', 'massDelete'];
+    }
+
     public function fields(): array
     {
         return [
