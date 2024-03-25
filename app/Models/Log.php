@@ -13,12 +13,17 @@ class Log extends Model
 
     public function netping(): BelongsTo
     {
-        return $this->belongsTo(Netping::class, 'id', 'netping_id');
+        return $this->belongsTo(Netping::class);
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function action(): BelongsTo
+    {
+        return $this->belongsTo(Action::class);
     }
 }
 

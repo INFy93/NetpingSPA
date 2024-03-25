@@ -20,6 +20,16 @@ class UserResource extends ModelResource
 
     protected string $title = 'Пользователи';
 
+    public string $column = 'login';
+
+    protected string $sortDirection = 'ASC';
+
+    protected bool $createInModal = true;
+
+    protected bool $editInModal = true;
+
+    protected bool $detailInModal = true;
+
     public function fields(): array
     {
         return [

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Log;
 use App\Models\Netping;
 use Illuminate\Http\Request;
 use function App\Helpers\get_alarm_state;
