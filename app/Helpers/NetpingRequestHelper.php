@@ -16,7 +16,7 @@ function get_power_state($netping_ips): array
         foreach ($netping_ips as $power) {
                 $pool
                     ->withOptions([
-                        'connect_timeout' => 0.1
+                        'connect_timeout' => 0.2
                     ])
                     ->retry(3, 100, function ($exp) use ($pool) {
                         return $pool instanceof \Illuminate\Http\Client\ConnectionException;
@@ -44,7 +44,7 @@ function get_door_state($netping_ips): array
         foreach ($netping_ips as $door) {
             $pool
                 ->withOptions([
-                    'connect_timeout' => 0.1
+                    'connect_timeout' => 0.2
                 ])
                 ->retry(3, 100, function ($exp) use ($pool) {
                     return $pool instanceof \Illuminate\Http\Client\ConnectionException;
@@ -73,7 +73,7 @@ function get_alarm_state($netping_ips): array
         foreach ($netping_ips as $alram) {
             $pool
                 ->withOptions([
-                    'connect_timeout' => 0.1
+                    'connect_timeout' => 0.2
                 ])
                 ->retry(3, 100, function ($exp) use ($pool) {
                     return $pool instanceof \Illuminate\Http\Client\ConnectionException;
@@ -99,7 +99,7 @@ function get_netping_state($netping_ips): array
         foreach ($netping_ips as $secure) {
             $pool
                 ->withOptions([
-                    'connect_timeout' => 0.1
+                    'connect_timeout' => 0.2
                 ])
                 ->retry(3, 100, function ($exp) use ($pool) {
                     return $pool instanceof \Illuminate\Http\Client\ConnectionException;
@@ -111,7 +111,7 @@ function get_netping_state($netping_ips): array
         foreach ($responses as $r) {
             if (!$r instanceof ConnectionException)
             {
-                if (mb_detect_encoding($r) == "ASCII") {
+                if (strlen($r->body()) == 1) {
                     $s_state[] = iconv("ascii", "utf-8", $r->body());
                 } else {
                     $netping_state = iconv("windows-1251", "utf-8", $r->body());
