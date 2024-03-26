@@ -42,6 +42,11 @@ function toggleDarkMode() {
                                 <NavLink :href="route('netping.index')" :active="route().current('netping.index')">
                                     Netping
                                 </NavLink>
+                                <a class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 transition duration-150 ease-in-out"
+                                    v-if="$page.props.auth.user.is_admin === 1"
+                                    href="/admin" >
+                                    Управление
+                                </a>
                             </div>
                         </div>
 
@@ -138,9 +143,9 @@ function toggleDarkMode() {
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.edit')"> Профиль </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log Out
+                                Выйти
                             </ResponsiveNavLink>
                         </div>
                     </div>
