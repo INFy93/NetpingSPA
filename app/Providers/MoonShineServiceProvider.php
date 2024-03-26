@@ -38,6 +38,8 @@ class MoonShineServiceProvider extends MoonShineApplicationServiceProvider
             MenuItem::make('Пользователи', new UserResource()),
             MenuItem::make('Действия', new ActionResource()),
             MenuItem::make('Логи', new LogResource()),
+            MenuDivider::make(),
+            MenuItem::make('Главная', '/')
         ];
     }
 
