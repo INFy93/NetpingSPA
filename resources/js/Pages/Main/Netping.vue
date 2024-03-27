@@ -8,9 +8,6 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <PrimaryButton>
-                    Добавить точку
-                </PrimaryButton>
                 <table class="border-collapse w-full mt-3" id="main_table">
                     <thead>
                     <tr >
