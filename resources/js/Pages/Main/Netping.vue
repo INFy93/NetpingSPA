@@ -102,6 +102,7 @@
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                            <span
+                           @click="switchAlarm(point.id)"
                            class="netping_action text-blue-600 dark:text-blue-200 hover:text-blue-900 dark:hover:text-blue-300 underline cursor-pointer"
                            >
                                 Снять с охраны
@@ -152,6 +153,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
+import useSecure from "@/Composables/Secure/Secure.js";
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
@@ -163,6 +165,7 @@ import DangerTemp from "@/Components/Temperatures/DangerTemp.vue";
 defineProps({
     netping: Object
 })
+const { switchAlarm } = useSecure();
 const { powerState, doorState, alarmState, secureState, power, door, alarm, secure } = useNetpingStates();
 const { temps, getBdcomTemps } = useBdcomTemperatures();
 
