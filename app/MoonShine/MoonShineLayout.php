@@ -24,10 +24,10 @@ final class MoonShineLayout implements MoonShineLayoutContract
         return LayoutBuilder::make([
             Sidebar::make([
                 Menu::make(),
-                When::make(
+               /* When::make(
                     static fn() => config('moonshine.auth.enable', true),
                     static fn() => [Profile::make(withBorder: true)]
-                ),
+                ),*/
             ]),
             LayoutBlock::make([
                 Flash::make(),
