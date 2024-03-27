@@ -130,6 +130,8 @@
                                 <WarningTemp v-else-if="temps[index]['bdcom2_temp'] >= 70 && temps[index]['bdcom2_temp'] <= 74">{{ temps[index]['bdcom2_temp'] }}</WarningTemp>
                                 <DangerTemp v-else-if="temps[index]['bdcom2_temp'] >= 75">{{temps[index]['bdcom2_temp']}}</DangerTemp>
                             </span>
+                            <span
+                                class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">T°</span>
                         </td>
                     </tr>
                     </tbody>
