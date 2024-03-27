@@ -18,6 +18,7 @@ Route::get('/',  function () {
 
 Route::middleware('auth')->group( function () {
    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
+   Route::get('temperature', \App\Http\Controllers\TemperatureGraphsController::class)->name('temperature-graphs');
 });
 
 Route::middleware('auth')->group(function () {
