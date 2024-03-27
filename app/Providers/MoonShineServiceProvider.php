@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\MoonShine\Pages\Graphs\TemperatureGraphs;
 use App\MoonShine\Resources\ActionResource;
 use App\MoonShine\Resources\BdcomResource;
 use App\MoonShine\Resources\LogResource;
@@ -38,6 +39,8 @@ class MoonShineServiceProvider extends MoonShineApplicationServiceProvider
             MenuItem::make('Пользователи', new UserResource()),
             MenuItem::make('Действия', new ActionResource()),
             MenuItem::make('Логи', new LogResource()),
+            MenuDivider::make(),
+            MenuItem::make('Графики', new TemperatureGraphs()),
             MenuDivider::make(),
             MenuItem::make('Главная', '/')
         ];
