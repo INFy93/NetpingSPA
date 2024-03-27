@@ -101,7 +101,12 @@
                             {{ point.ip }}
                         </td>
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                            Снять с охраны
+                           <span
+                           class="netping_action text-blue-600 dark:text-blue-200 hover:text-blue-900 dark:hover:text-blue-300 underline cursor-pointer"
+                           >
+                                Снять с охраны
+                           </span>
+
                         </td>
                         <td
                             class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-300 border border-b text-left block lg:table-cell relative lg:static">

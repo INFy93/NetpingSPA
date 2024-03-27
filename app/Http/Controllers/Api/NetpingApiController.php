@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
 use App\Models\Netping;
+use App\Services\AlarmSwitch;
 use Illuminate\Http\Request;
 use function App\Helpers\get_alarm_state;
 use function App\Helpers\get_door_state;
@@ -63,5 +64,10 @@ class NetpingApiController extends Controller
             'revision' => $revision,
             'secure_data' => $secure_state
         ])->getData();
+    }
+
+    public function switchAlarm($neting_id, AlarmSwitch $alarmSwitch)
+    {
+        return $alarmSwitch->setAlarm();
     }
 }
