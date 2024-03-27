@@ -10,6 +10,7 @@ use App\MoonShine\Resources\BdcomResource;
 use App\MoonShine\Resources\LogResource;
 use App\MoonShine\Resources\NetpingResource;
 use App\MoonShine\Resources\UserResource;
+use Illuminate\Http\Request;
 use MoonShine\Menu\MenuDivider;
 use MoonShine\Providers\MoonShineApplicationServiceProvider;
 use MoonShine\MoonShine;
@@ -33,15 +34,19 @@ class MoonShineServiceProvider extends MoonShineApplicationServiceProvider
     protected function menu(): array
     {
         return [
-            MenuItem::make('Точки', new NetpingResource()),
-            MenuItem::make('BDCOM', new BdcomResource()),
-            MenuDivider::make('Управление'),
-            MenuItem::make('Пользователи', new UserResource()),
-            MenuItem::make('Действия', new ActionResource()),
-            MenuItem::make('Логи', new LogResource()),
-            MenuDivider::make(),
+            MenuGroup::make('Управление', [
+                MenuItem::make('Точки', new NetpingResource()),
+                MenuItem::make('BDCOM', new BdcomResource()),
+                MenuDivider::make(),
+                MenuItem::make('Пользователи', new UserResource()),
+                MenuItem::make('Действия', new ActionResource()),
+                MenuItem::make('Логи', new LogResource()),
+            ])
+                ->canSee(function(Request $request) {
+                    return $request->user()->is_admin === 1;
+                })
+            ,
             MenuItem::make('Графики', new TemperatureGraphs()),
-            MenuDivider::make(),
             MenuItem::make('Главная', '/')
         ];
     }
