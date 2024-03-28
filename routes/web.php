@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\NetpingApiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,6 +20,8 @@ Route::get('/',  function () {
 Route::middleware('auth')->group( function () {
    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
    Route::get('temperature', \App\Http\Controllers\TemperatureGraphsController::class)->name('temperature-graphs');
+//   //Notification::route('telegram', '299980263')
+//        ->notify(new \App\Notifications\Telegram());
 });
 
 Route::middleware('auth')->group(function () {

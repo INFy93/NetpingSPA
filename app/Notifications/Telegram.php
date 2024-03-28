@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Telegram\TelegramMessage;
 
 class Telegram extends Notification
 {
@@ -26,29 +27,22 @@ class Telegram extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['telegram'];
     }
 
     /**
-     * Get the mail representation of the notification.
+     * @throws \JsonException
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toTelegram($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
-    }
+        $url = url('/netping');
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
+        return TelegramMessage::create()
+            // Optional recipient user id.
+
+            // Markdown supported.
+            ->content("Привет!")
+            // (Optional) Inline Buttons
+            ->button('Точки', $url);
     }
 }
