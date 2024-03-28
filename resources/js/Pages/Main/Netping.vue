@@ -125,7 +125,7 @@
                         <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                            <span
                                class="netping_action text-blue-600 dark:text-blue-200 hover:text-blue-900 dark:hover:text-blue-300 underline cursor-pointer"
-                               @click="switchAlarm(point.id)"
+                               @click="switchSecureStatus(point.id)"
                            >
                                 <span
                                     v-if="secure.secure_data !== undefined && (secure.secure_data[index] === '1' || secure.secure_data[index] === 'direction:2')">Снять с охраны</span>
@@ -188,7 +188,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from '@inertiajs/vue3';
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {router} from "@inertiajs/vue3";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
@@ -204,6 +203,9 @@ import DangerTemp from "@/Components/Temperatures/DangerTemp.vue";
 defineProps({
     netping: Object
 })
+
+const url = route('netping.index');
+
 const {switchAlarm} = useSecure();
 const {powerState, doorState, alarmState, secureState, power, door, alarm, secure} = useNetpingStates();
 const {temps, getBdcomTemps} = useBdcomTemperatures();
@@ -215,6 +217,11 @@ onMounted(async () => {
     await alarmState();
     await getBdcomTemps();
 })
+
+const switchSecureStatus = async (id) => {
+    await switchAlarm(id);
+    await router.get(url, { preserveState: true, preserveScroll: true, only: ['netping'] })
+}
 setInterval(powerState, 20000);
 setInterval(secureState, 20000);
 setInterval(doorState, 20000);
