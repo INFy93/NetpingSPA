@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telegram_user_id'
     ];
 
     /**
@@ -43,5 +44,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Route notifications for the Telegram channel.
+     *
+     * @return int
+     */
+    public function routeNotificationForTelegram()
+    {
+        return $this->telegram_user_id;
     }
 }
