@@ -9,8 +9,6 @@ export default function useBdcomTemperatures()
         let response = await axios.get('/api/bdcoms_current_temp');
 
         temps.value = response.data;
-
-        console.log(temps.value);
     }
 
     return {
