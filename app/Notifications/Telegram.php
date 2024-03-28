@@ -10,14 +10,24 @@ use NotificationChannels\Telegram\TelegramMessage;
 
 class Telegram extends Notification
 {
-    use Queueable;
+    public $user_name;
+    public $telegram_user_id;
+    public $netping_name;
+    public $state;
+    public $date;
+    public $time;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($user_name, $telegram_user_id, $netping_name, $state, $date, $time)
     {
-        //
+        $this->user_name = $user_name;
+        $this->telegram_user_id = $telegram_user_id;
+        $this->netping_name = $netping_name;
+        $this->state = $state;
+        $this->date = $date;
+        $this->time = $time;
     }
 
     /**
@@ -33,16 +43,21 @@ class Telegram extends Notification
     /**
      * @throws \JsonException
      */
-    public function toTelegram($notifiable)
+    public function toTelegram()
     {
         $url = url('/netping');
 
         return TelegramMessage::create()
-            // Optional recipient user id.
-
             // Markdown supported.
-            ->content("Привет!")
+            ->content("*Точка " . $this->netping_name . " " . mb_strtolower($this->state) . "*\n")
+            ->line("\n")
+            ->line("*Дата:*" . " " . $this->date)
+            ->line("*Время:*" . " " . $this->time)
+            ->line("*Пользователь:*" . " " . $this->user_name)
+            ->line("*Точка:*" . " " . $this->netping_name)
+            ->line("*Новый статус:*" . " " . $this->state)
+
             // (Optional) Inline Buttons
-            ->button('Точки', $url);
+            ->button('Посмотреть статус точек', $url);
     }
 }

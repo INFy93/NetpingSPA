@@ -115,7 +115,7 @@ class AlarmSwitch
                         return 3;
                     }
                     if ($raw_state && $restart_logic) {
-                        $logService->logging($netping_v4->id, $netping_v4->name, 1 );
+                        $logService->logging($netping_v4->id, $netping_v4->name, 2 );
                         $status = 1;
                     } else {
                         $status = 2;
