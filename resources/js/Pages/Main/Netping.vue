@@ -204,7 +204,7 @@ defineProps({
     netping: Object
 })
 
-const url = route('netping.index');
+const url = route('secure');
 
 const {switchAlarm} = useSecure();
 const {powerState, doorState, alarmState, secureState, power, door, alarm, secure} = useNetpingStates();
@@ -220,7 +220,7 @@ onMounted(async () => {
 
 const switchSecureStatus = async (id) => {
     await switchAlarm(id);
-    await router.get(url, { preserveState: true, preserveScroll: true, only: ['netping'] })
+    await secureState();
 }
 setInterval(powerState, 20000);
 setInterval(secureState, 20000);
