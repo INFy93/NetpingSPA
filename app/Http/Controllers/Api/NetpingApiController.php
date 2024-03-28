@@ -68,6 +68,6 @@ class NetpingApiController extends Controller
 
     public function switchAlarm($neting_id, AlarmSwitch $alarmSwitch)
     {
-        return $alarmSwitch->setAlarm();
+        return $alarmSwitch->setAlarm($neting_id);
     }
 }

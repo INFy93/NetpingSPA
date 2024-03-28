@@ -14,21 +14,20 @@ function get_power_state($netping_ips): array
     $p_state = [];
     $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
         foreach ($netping_ips as $power) {
-                $pool
-                    ->withOptions([
-                        'connect_timeout' => 0.2
-                    ])
-                    ->retry(3, 100, function ($exp) use ($pool) {
-                        return $pool instanceof \Illuminate\Http\Client\ConnectionException;
-                    })
-                   ->get($power->power_state);
+            $pool
+                ->withOptions([
+                    'connect_timeout' => 0.2
+                ])
+                ->retry(3, 100, function ($exp) use ($pool) {
+                    return $pool instanceof \Illuminate\Http\Client\ConnectionException;
+                })
+                ->get($power->power_state);
         }
     });
     foreach ($responses as $r) {
         if (!$r instanceof ConnectionException) {
             $p_state[] = explode(", ", $r);
-        } else
-        {
+        } else {
             $p_state[] = ['0', '0', '3'];
         }
 
@@ -56,8 +55,7 @@ function get_door_state($netping_ips): array
     foreach ($responses as $r) {
         if (!$r instanceof ConnectionException) {
             $d_state[] = explode(", ", $r);
-        } else
-        {
+        } else {
             $d_state[] = ['0', '0', '3'];
         }
 
@@ -84,8 +82,7 @@ function get_alarm_state($netping_ips): array
     foreach ($responses as $r) {
         if (!$r instanceof ConnectionException) {
             $a_state[] = explode(", ", $r);
-        } else
-        {
+        } else {
             $a_state[] = ['0', '0', '3'];
         }
     }
@@ -105,25 +102,57 @@ function get_netping_state($netping_ips): array
                     return $pool instanceof \Illuminate\Http\Client\ConnectionException;
                 })
                 ->get($secure->netping_state);
-
         }
     });
-        foreach ($responses as $r) {
-            if (!$r instanceof ConnectionException)
-            {
-                if (strlen($r->body()) == 1) {
-                    $s_state[] = iconv("ascii", "utf-8", $r->body());
-                } else {
-                    $netping_state = iconv("windows-1251", "utf-8", $r->body());
-                    $netping_state = Str::after($netping_state, "data=");
-                    $netping_state = Str::remove(";", $netping_state);
-                    $netping_state = explode(",", $netping_state);
-                    $s_state[] = $netping_state[19];
-                }
+    foreach ($responses as $r) {
+        if (!$r instanceof ConnectionException) {
+            if (strlen($r->body()) == 1) {
+                $s_state[] = iconv("ascii", "utf-8", $r->body());
             } else {
-                $s_state[] = '3';
+                $netping_state = iconv("windows-1251", "utf-8", $r->body());
+                $netping_state = Str::after($netping_state, "data=");
+                $netping_state = Str::remove(";", $netping_state);
+                $netping_state = explode(",", $netping_state);
+                $s_state[] = $netping_state[19];
             }
-
+        } else {
+            $s_state[] = '3';
         }
+
+    }
     return $s_state;
 }
+
+function get_single_secure_state($netping_ip): false|string
+{
+    $r = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
+
+    if (!$r instanceof ConnectionException) {
+        if (strlen($r->body()) == 1) {
+            $state = iconv("ascii", "utf-8", $r->body());
+        } else {
+            $netping_state = iconv("windows-1251", "utf-8", $r->body());
+            $netping_state = Str::after($netping_state, "data=");
+            $netping_state = Str::remove(";", $netping_state);
+            $netping_state = explode(",", $netping_state);
+            $state = $netping_state[19];
+        }
+    } else {
+        $state = '3';
+    }
+
+    return $state;
+}
+
+function get_single_door_state($netping_ip): string
+{
+    try {
+        $raw_door_state = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
+    } catch (ConnectionException $exp) {
+        return '3';
+    }
+    $door_state = explode(", ", $raw_door_state);
+
+    return $door_state[2];
+}
+

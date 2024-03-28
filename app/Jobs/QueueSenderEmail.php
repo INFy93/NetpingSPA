@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Mail\LogMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class QueueSenderEmail implements ShouldQueue
 {
@@ -36,6 +38,6 @@ class QueueSenderEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        Mail::to($this->mail_address)->send(new LogMail($this->user, $this->netping, $this->state, $this->time, $this->date));
     }
 }

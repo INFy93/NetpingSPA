@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 
 Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
     Route::get('/power', [NetpingApiController::class, 'get_power_data']);
-    Route::get('/secure', [NetpingApiController::class, 'get_secure_data']);
+    Route::get('/secure', [NetpingApiController::class, 'get_secure_data'])->name('secure');
     Route::get('/door', [NetpingApiController::class, 'get_door_data']);
     Route::get('/alarm', [NetpingApiController::class, 'get_alarm_data']);
     Route::get('/alarm/set/{id}', [NetpingApiController::class, 'switchAlarm']);
