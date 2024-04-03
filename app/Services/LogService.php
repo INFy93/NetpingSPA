@@ -25,7 +25,8 @@ class LogService
         $log->save();
 
         foreach ($users as $user) {
-           dispatch(new QueueSenderTelegram($user, $user->name, $user->telegram_user_id, $netping_name, $state, date('Y-m-d'), date('H:i:s')));
+            if ($user->telegram_user_id)
+           dispatch(new QueueSenderTelegram($user, Auth::user()->name, $user->telegram_user_id, $netping_name, $state, date('Y-m-d'), date('H:i:s')));
             if ($user->order_email == 1) {
                 dispatch(new QueueSenderEmail($user->email, Auth::user()->name, $netping_name, $state, date('H:i:s'), date('Y-m-d')));
             }
