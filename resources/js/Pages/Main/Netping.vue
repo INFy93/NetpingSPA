@@ -12,17 +12,17 @@
                     <TabList class="flex flex-wrap -mb-px font-medium text-center">
                         <Tab v-slot="{ selected }" as="template">
                             <button
+                                :class="{ 'border-b-4 border-blue-500 dark:border-gray-500 dark:text-gray-200' : selected }"
                                 class="mr-2 inline-flex outline-none p-4 border-b-2 border-transparent hover:border-blue-400
                                  dark:hover:text-gray-300 dark:hover:border-gray-400 dark:text-gray-200"
-                                :class="{ 'border-b-4 border-blue-500 dark:border-gray-500 dark:text-gray-200' : selected }"
                             > Netping
                             </button>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
                             <button
+                                :class="{ 'border-b-4 border-blue-500 dark:border-gray-500 dark:text-gray-200' : selected }"
                                 class="mr-2 inline-flex outline-none p-4 border-b-2 border-transparent hover:border-blue-400
                                  dark:hover:text-gray-300 dark:hover:border-gray-400 dark:text-gray-200"
-                                :class="{ 'border-b-4 border-blue-500 dark:border-gray-500 dark:text-gray-200' : selected }"
                             > BDCOM
                             </button>
                         </Tab>
