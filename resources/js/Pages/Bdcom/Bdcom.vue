@@ -26,9 +26,16 @@
 </template>
 
 <script setup>
-
+import useBdcoms from "@/Composables/Bdcom/bdcom.js";
+import {onMounted} from "vue";
 defineProps({
     temp: Object
+})
+
+const { bdcoms, getBdcoms } = useBdcoms();
+
+onMounted(async () => {
+    await getBdcoms();
 })
 
 </script>
