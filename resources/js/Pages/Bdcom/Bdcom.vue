@@ -25,8 +25,10 @@
     </table>
 </template>
 
-<script>
-export default {
-    name: "Bdcom"
-}
+<script setup>
+
+defineProps({
+    temp: Object
+})
+
 </script>

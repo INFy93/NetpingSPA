@@ -213,7 +213,7 @@
 
                         </TabPanel>
                         <TabPanel>
-                            <Bdcom></Bdcom>
+                            <Bdcom :temp = temps></Bdcom>
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>
@@ -264,5 +264,6 @@ setInterval(powerState, 20000);
 setInterval(secureState, 20000);
 setInterval(doorState, 20000);
 setInterval(alarmState, 20000);
+setInterval(getBdcomTemps, 300000);
 //setInterval(async () => router.reload({ only: ['netping'] }), 3000);
 </script>
