@@ -12,9 +12,10 @@ class BdcomApiController extends Controller
 {
     public function getBdcomCurrentTemperature()
     {
+        $request = \request('group', '');
         $bdcoms = Bdcom::select('id', 'bdcom_ip', 'netping_id')->get();
 
-        $temps = getBdcomTemp($bdcoms);
+        $temps = getBdcomTemp($bdcoms, $request);
 
         return response()->json($temps)->getData();
     }
