@@ -22,7 +22,11 @@ class BdcomApiController extends Controller
     public function getBdcoms()
     {
         return BdcomResource::collection(
-            Bdcom::all()
+            Bdcom::query()
+                ->with(['netping' => function ($query) {
+                    $query->select('id', 'name', 'bdcom_id');
+                }])
+                ->get()
         );
     }
 }
