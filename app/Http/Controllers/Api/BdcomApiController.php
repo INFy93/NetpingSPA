@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BdcomResource;
 use App\Models\Bdcom;
 use Illuminate\Http\Request;
 use function App\Helpers\getBdcomTemp;
@@ -16,5 +17,12 @@ class BdcomApiController extends Controller
         $temps = getBdcomTemp($bdcoms);
 
         return response()->json($temps)->getData();
+    }
+
+    public function getBdcoms()
+    {
+        return BdcomResource::collection(
+            Bdcom::all()
+        );
     }
 }
