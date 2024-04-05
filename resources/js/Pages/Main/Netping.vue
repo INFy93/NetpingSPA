@@ -212,7 +212,9 @@
                             </table>
 
                         </TabPanel>
-                        <TabPanel>TEST</TabPanel>
+                        <TabPanel>
+                            <Bdcom></Bdcom>
+                        </TabPanel>
                     </TabPanels>
                 </TabGroup>
             </div>
@@ -224,6 +226,7 @@ import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from '@inertiajs/vue3';
 import {router} from "@inertiajs/vue3";
+import Bdcom from "@/Pages/Bdcom/Bdcom.vue";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
 import useSecure from "@/Composables/Secure/Secure.js";
