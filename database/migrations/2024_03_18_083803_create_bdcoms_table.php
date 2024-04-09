@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('bdcom_name');
             $table->ipAddress('bdcom_ip');
-            $table->integer('netping_ip');
+            $table->integer('netping_id')->nullable();
         });
     }
 
