@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CameraController;
 use App\Http\Controllers\Api\NetpingApiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -20,8 +21,6 @@ Route::get('/',  function () {
 Route::middleware('auth')->group( function () {
    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
    Route::get('temperature', \App\Http\Controllers\TemperatureGraphsController::class)->name('temperature-graphs');
-//   //Notification::route('telegram', '299980263')
-//        ->notify(new \App\Notifications\Telegram());
 });
 
 Route::middleware('auth')->group(function () {
@@ -39,7 +38,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
 
     Route::get('/bdcoms_current_temp', [\App\Http\Controllers\Api\BdcomApiController::class, 'getBdcomCurrentTemperature']);
     Route::get('/bdcoms', [\App\Http\Controllers\Api\BdcomApiController::class, 'getBdcoms']);
-   // Route::get('/netping_camera/{id}', [CameraController::class, 'getCamera']);
+    Route::get('/netping_camera/{id}', [CameraController::class, 'getCamera']);
 
     //Route::get('/temp/{id}', [\App\Http\Controllers\Api\BdcomController::class, 'getTemperature']);
 
