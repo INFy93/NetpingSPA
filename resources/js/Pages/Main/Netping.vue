@@ -218,6 +218,9 @@
                     </TabPanels>
                 </TabGroup>
             </div>
+            <Modal :show="openingCameraModal" @close="closeModal">
+                <span>Тут будет камера</span>
+            </Modal>
         </div>
     </AuthenticatedLayout>
 </template>
@@ -233,7 +236,8 @@ import useSecure from "@/Composables/Secure/Secure.js";
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
-import {onMounted} from "vue";
+import Modal from "@/Components/Modal.vue";
+import {onMounted, ref} from "vue";
 import NormalTemp from "@/Components/Temperatures/NormalTemp.vue";
 import WarningTemp from "@/Components/Temperatures/WarningTemp.vue";
 import DangerTemp from "@/Components/Temperatures/DangerTemp.vue";
@@ -248,6 +252,8 @@ const {switchAlarm} = useSecure();
 const {powerState, doorState, alarmState, secureState, power, door, alarm, secure} = useNetpingStates();
 const {temps, getBdcomTemps} = useBdcomTemperatures();
 
+const openingCameraModal = ref(false);
+
 onMounted(async () => {
     await powerState();
     await secureState();
@@ -255,7 +261,13 @@ onMounted(async () => {
     await alarmState();
     await getBdcomTemps(1);
 })
+const openCameraModal = () => {
+    openingCameraModal.value = true;
+}
 
+const closeModal = () => {
+    openingCameraModal.value = false;
+}
 const switchSecureStatus = async (id) => {
     await switchAlarm(id);
     await secureState();

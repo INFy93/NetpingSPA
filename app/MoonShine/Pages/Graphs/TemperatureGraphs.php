@@ -70,6 +70,6 @@ class TemperatureGraphs extends Page
 
     public function components(): array
 	{
-		return (array)$this->charts;
+		return [$this->charts];
 	}
 }
