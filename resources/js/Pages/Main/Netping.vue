@@ -157,9 +157,10 @@
                                     </td>
                                     <td
                                         class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-300 border border-b text-left block lg:table-cell relative lg:static">
-                                        <a v-if="point.camera_ip" id="cam_link" data-bs-target="#cam_popup"
-                                           data-bs-toggle="modal"
-                                           href="#">
+                                        <span v-if="point.camera_ip"
+                                              @click="openCameraModal"
+                                              class="cursor-pointer"
+                                           >
                                             <svg
                                                 class="h-6 w-6"
                                                 fill="none" stroke="currentColor"
@@ -173,7 +174,7 @@
                                                 <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round"
                                                       stroke-linejoin="round" stroke-width="2"/>
                                             </svg>
-                                        </a>
+                                        </span>
                                     </td>
                                     <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
                                         <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id">
