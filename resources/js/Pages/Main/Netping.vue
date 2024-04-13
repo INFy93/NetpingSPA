@@ -158,7 +158,7 @@
                                     <td
                                         class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-300 border border-b text-left block lg:table-cell relative lg:static">
                                         <span v-if="point.camera_ip"
-                                              @click="openCameraModal"
+                                              @click="openCameraModal(point.id)"
                                               class="cursor-pointer"
                                            >
                                             <svg
@@ -219,8 +219,8 @@
                     </TabPanels>
                 </TabGroup>
             </div>
-            <Modal :show="openingCameraModal" @close="closeModal">
-                <span>Тут будет камера</span>
+            <Modal :show="openingCameraModal" @close="closeModal" max-width="camera">
+                <img :src="cameraData" alt="camera">
             </Modal>
         </div>
     </AuthenticatedLayout>
@@ -234,6 +234,7 @@ import Bdcom from "@/Pages/Bdcom/Bdcom.vue";
 import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
 import useSecure from "@/Composables/Secure/Secure.js";
+import useCamera from "@/Composables/Camera/Camera.js";
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
@@ -252,8 +253,10 @@ const url = route('secure');
 const {switchAlarm} = useSecure();
 const {powerState, doorState, alarmState, secureState, power, door, alarm, secure} = useNetpingStates();
 const {temps, getBdcomTemps} = useBdcomTemperatures();
+const { cameraData, getCameraImage } = useCamera();
 
 const openingCameraModal = ref(false);
+const timer = ref();
 
 onMounted(async () => {
     await powerState();
@@ -262,17 +265,23 @@ onMounted(async () => {
     await alarmState();
     await getBdcomTemps(1);
 })
-const openCameraModal = () => {
+const openCameraModal = async (id) => {
     openingCameraModal.value = true;
+    await getCameraImage(id);
+    timer.value = setInterval(async function () {
+        await getCameraImage(id)
+    }, 8000);
 }
 
 const closeModal = () => {
     openingCameraModal.value = false;
+    clearInterval(timer.value);
 }
 const switchSecureStatus = async (id) => {
     await switchAlarm(id);
     await secureState();
 }
+
 setInterval(powerState, 20000);
 setInterval(secureState, 20000);
 setInterval(doorState, 20000);
