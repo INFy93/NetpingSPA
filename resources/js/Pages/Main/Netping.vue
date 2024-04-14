@@ -177,7 +177,7 @@
                                         </span>
                                     </td>
                                     <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                                        <span v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id">
+                                        <span v-if="temps[index] !== undefined && (temps[index]['netping_id'] || temps[index]['netping_id'] === point.id)">
                                             <NormalTemp v-if="temps[index]['bdcom1_temp'] <= 69">{{
                                                     temps[index]['bdcom1_temp']
                                                 }}</NormalTemp>

@@ -22,13 +22,14 @@ function getBdcomTemp($bdcoms, $group = 1): array
     foreach ($responses as $r) {
         if ($group == 1) {
             if (!$r instanceof ConnectionException) {
-                if (($i - 1) >= 0 && $bdcoms[$i]->netping_id == $bdcoms[$i - 1]->netping_id) {
+                if (($i - 1) >= 0 && ($bdcoms[$i]->netping_id && $bdcoms[$i - 1]->netping_id) && $bdcoms[$i]->netping_id == $bdcoms[$i - 1]->netping_id) {
                     $temps[$i]['bdcom1_temp'] = intval($temps[$i - 1]['bdcom1_temp']);
                     $temps[$i]['bdcom2_temp'] = intval(str_replace("\n", "", $r->body()));
                     $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
                     $temps[$i]['bdcom_id'] = $bdcoms[$i]->id;
                     unset($temps[$i - 1]);
-                } else {
+                } else if ($bdcoms[$i]->netping_id)
+                {
                     $temps[$i]['bdcom1_temp'] = intval(str_replace("\n", "", $r->body()));
                     $temps[$i]['netping_id'] = $bdcoms[$i]->netping_id;
                     $temps[$i]['bdcom_id'] = $bdcoms[$i]->id;
