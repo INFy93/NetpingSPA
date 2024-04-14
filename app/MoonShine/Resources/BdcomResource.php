@@ -22,6 +22,8 @@ class BdcomResource extends ModelResource
 
     protected string $title = 'BDCOM';
 
+    public string $column = 'bdcom_name';
+
     protected string $sortDirection = 'ASC';
 
     protected bool $createInModal = true;

@@ -10,6 +10,9 @@ class Bdcom extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable = [
+      'netping_id'
+    ];
 
     public function netping(): BelongsTo
     {

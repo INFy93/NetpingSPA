@@ -13,6 +13,8 @@ use MoonShine\Decorations\Divider;
 use MoonShine\Fields\Checkbox;
 use MoonShine\Fields\Fields;
 use MoonShine\Fields\Hidden;
+use MoonShine\Fields\Relationships\BelongsTo;
+use MoonShine\Fields\Relationships\BelongsToMany;
 use MoonShine\Fields\Relationships\HasMany;
 use MoonShine\MoonShineRequest;
 use MoonShine\QueryTags\QueryTag;
@@ -53,7 +55,7 @@ class NetpingResource extends ModelResource
                 HasMany::make('BDCOM', 'bdcoms', resource: new BdcomResource())
                     ->fields([
                         Text::make('IP', 'bdcom_ip')
-                    ]),
+                    ])->creatable(),
                 Text::make('Камера', 'camera_ip'),
             ]),
         ];
