@@ -82,12 +82,17 @@ class NetpingResource extends ModelResource
                  * Helper array: formatting netping links using revision
                  */
                     $params = [
-                      'power_state' => env('NETPING_LOGIN') . $value . ($revision == 2 ? env('POWER_STATE') : env('POWER_STATE_v4')),
-                      'door_state' =>  env('NETPING_LOGIN') . $value . ($revision == 2 ? env('DOOR_STATE') : env('DOOR_STATE_v4')),
-                      'alarm_state' => env('NETPING_LOGIN') . $value . ($revision == 2 ? env('ALARM_STATE') : env('ALARM_STATE_v4')),
-                      'netping_state' => env('NETPING_LOGIN') . $value . ($revision == 2 ? env('NETPING_STATE') : env('NETPING_STATE_v4')),
-                      'alarm_control' => env('NETPING_LOGIN') . $value . ($revision == 2 ? env('ALARM_CONTROL') : env('ALARM_CONTROL_v4')),
-                      'alarm_switch_v4' => $revision == 4 ? env('NETPING_LOGIN') . $value .  env('ALARM_SWITCH_V4') : '',
+                      'power_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.power_state') :
+                              config('netping.power_state_v4')),
+                      'door_state' =>  config('netping.netping_login') . $value . ($revision == 2 ? config('netping.door_state') :
+                              config('netping.door_state_v4')),
+                      'alarm_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_state') :
+                              config('netping.alarm_state_v4')),
+                      'netping_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.netping_state') :
+                              config('netping.netping_state_v4')),
+                      'alarm_control' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_control') :
+                              config('netping.alarm_control_v4')),
+                      'alarm_switch_v4' => $revision == 4 ? config('netping.netping_login') . $value .  config('netping.alarm_switch_v4') : '',
                     ];
                     foreach ($params as $key => $value) //fill fields using helper array and foreach loop
                     {
@@ -116,7 +121,7 @@ class NetpingResource extends ModelResource
      */
     public function setRevisionToCreateNetpingLinks(MoonShineRequest $request)
     {
-        session()->put('revision', $request->get('value'));
+        $request->session()->put('revision', $request->get('value'));
     }
 
     public function rules(Model $item): array

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CameraController;
 use App\Http\Controllers\Api\NetpingApiController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,9 @@ Route::get('/',  function () {
 Route::middleware('auth')->group( function () {
    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
    Route::get('temperature', \App\Http\Controllers\TemperatureGraphsController::class)->name('temperature-graphs');
+    Route::get('clear', function() {
+        return Artisan::call('optimize:clear');
+    });
 });
 
 Route::middleware('auth')->group(function () {
