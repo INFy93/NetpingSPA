@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'netping_login' => env('NETPING_LOGIN', 'LOGIN LINK'),
+    'netping_login' => env('NETPING_LOGIN', 'YOUR NETPING LOGIN LINK'),
     'power_state' => env('POWER_STATE', '/io.cgi?io1'),
     'power_state_v4' => env('POWER_STATE_v4', '/io.cgi?io3'),
     'door_state' => env('DOOR_STATE', '/io.cgi?io2'),
