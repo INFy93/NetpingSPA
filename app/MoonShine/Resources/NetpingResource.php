@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Netping;
 
 use MoonShine\ActionButtons\ActionButton;
+use MoonShine\Components\Link;
 use MoonShine\Decorations\Divider;
 use MoonShine\Fields\Checkbox;
 use MoonShine\Fields\Fields;
@@ -52,10 +53,9 @@ class NetpingResource extends ModelResource
                 ID::make()->sortable(),
                 Text::make('Название', 'name'),
                 Text::make('IP', 'ip'),
-                HasMany::make('BDCOM', 'bdcoms', resource: new BdcomResource())
-                    ->fields([
-                        Text::make('IP', 'bdcom_ip')
-                    ])->creatable(),
+                BelongsToMany::make('BDCOM', 'bdcom',
+                    fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
+                    resource: new BdcomResource())->columnLabel('IP'),
                 Text::make('Камера', 'camera_ip'),
             ]),
         ];
@@ -106,6 +106,10 @@ class NetpingResource extends ModelResource
                 }
             ),
             Text::make('Камера', 'camera_ip'), //camera ip. not required
+            BelongsToMany::make('BDCOM', 'bdcom',
+                fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
+                resource: new BdcomResource())
+                ->selectMode()->creatable(),
             Divider::make('Ссылки на управление точкой (заполняются автоматически)'), //divider for section with netping links
             Text::make('Статус питания', 'power_state')->reactive(), //power state link
             Text::make('Статус двери', 'door_state')->reactive(), //door state link
