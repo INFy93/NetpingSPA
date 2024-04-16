@@ -40,7 +40,9 @@ class BdcomResource extends ModelResource
                 ID::make()->sortable(),
                 Text::make('Имя', 'bdcom_name'),
                 Text::make('IP', 'bdcom_ip'),
-                BelongsToMany::make('Точка', 'netping', resource: new NetpingResource())->nullable(),
+                BelongsToMany::make('Точка', 'netping', resource: new NetpingResource())
+                    ->selectMode()
+                    ->nullable(),
             ]),
         ];
     }

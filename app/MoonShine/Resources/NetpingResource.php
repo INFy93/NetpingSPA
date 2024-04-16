@@ -109,7 +109,7 @@ class NetpingResource extends ModelResource
             BelongsToMany::make('BDCOM', 'bdcom',
                 fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
                 resource: new BdcomResource())
-                ->selectMode()->creatable(),
+                ->selectMode()->creatable()->nullable(),
             Divider::make('Ссылки на управление точкой (заполняются автоматически)'), //divider for section with netping links
             Text::make('Статус питания', 'power_state')->reactive(), //power state link
             Text::make('Статус двери', 'door_state')->reactive(), //door state link
