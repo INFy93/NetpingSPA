@@ -18,4 +18,9 @@ class Netping extends Model
         return $this->hasMany(Bdcom::class);
     }
 
+    public function bdcom(): BelongsToMany
+    {
+        return $this->belongsToMany(Bdcom::class, 'netping_bdcom');
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bdcom extends Model
 {
@@ -14,8 +15,10 @@ class Bdcom extends Model
       'netping_id'
     ];
 
-    public function netping(): BelongsTo
+    public function netping(): BelongsToMany
     {
-        return $this->belongsTo(Netping::class);
+        return $this->belongsToMany(Netping::class, 'netping_bdcom');
     }
+
+
 }
