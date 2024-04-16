@@ -130,6 +130,11 @@ class NetpingResource extends ModelResource
         $request->session()->put('revision', $request->get('value'));
     }
 
+    public function redirectAfterSave(): string
+    {
+        return '/admin/resource/netping-resource/index-page';
+    }
+
     public function rules(Model $item): array
     {
         return [];
