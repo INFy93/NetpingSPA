@@ -36,7 +36,7 @@
             </td>
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-                {{ bdcom.netping === null ? "-" : bdcom.netping.name }}
+                {{ bdcom.netping[0] === undefined ? "-" : bdcom.netping[0].name }}
                 <span
                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Точка</span>
             </td>
