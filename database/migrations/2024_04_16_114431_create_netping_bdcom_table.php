@@ -12,11 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('netping_bdcom', function (Blueprint $table) {
-            $table->increments('id');
             $table->unsignedBigInteger('netping_id');
             $table->unsignedBigInteger('bdcom_id');
-            $table->foreign('netping_id')->references('id')->on('netping');
-            $table->foreign('bdcom_id')->references('id')->on('bdcoms');
+            $table->foreign('netping_id')->references('id')->on('netping')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('bdcom_id')->references('id')->on('bdcoms')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
