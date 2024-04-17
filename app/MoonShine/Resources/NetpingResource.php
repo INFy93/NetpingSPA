@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Netping;
 
-use MoonShine\ActionButtons\ActionButton;
-use MoonShine\Components\Link;
+
 use MoonShine\Decorations\Divider;
 use MoonShine\Fields\Checkbox;
 use MoonShine\Fields\Fields;
-use MoonShine\Fields\Hidden;
-use MoonShine\Fields\Relationships\BelongsTo;
 use MoonShine\Fields\Relationships\BelongsToMany;
-use MoonShine\Fields\Relationships\HasMany;
 use MoonShine\MoonShineRequest;
-use MoonShine\QueryTags\QueryTag;
 use MoonShine\Resources\ModelResource;
 use MoonShine\Decorations\Block;
 use MoonShine\Fields\ID;
@@ -106,6 +100,7 @@ class NetpingResource extends ModelResource
                 }
             ),
             Text::make('Камера', 'camera_ip'), //camera ip. not required
+            Divider::make('Добавить или выбрать BDCOM'),
             BelongsToMany::make('BDCOM', 'bdcom',
                 fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
                 resource: new BdcomResource())
