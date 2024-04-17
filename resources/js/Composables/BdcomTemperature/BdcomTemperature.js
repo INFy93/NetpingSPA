@@ -6,7 +6,7 @@ export default function useBdcomTemperatures()
     const temps = ref([]);
 
     const getBdcomTemps = async(group) => {
-        let response = await axios.get('/api/bdcoms_current_temp?group=' + group);
+        let response = await axios.get('/api/get_temps?group=' + group);
 
         temps.value = response.data;
     }
