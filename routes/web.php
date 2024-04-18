@@ -21,7 +21,6 @@ Route::get('/',  function () {
 
 Route::middleware('auth')->group( function () {
    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
-   Route::get('temperature', \App\Http\Controllers\TemperatureGraphsController::class)->name('temperature-graphs');
     Route::get('clear', function() {
         return Artisan::call('optimize:clear');
     });
@@ -31,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/graphs', [App\Http\Controllers\Api\TemperatureGraphController::class, 'index'])->name('netping.graphs');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
@@ -42,7 +42,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
 
     Route::get('/bdcoms_current_temp', [\App\Http\Controllers\Api\BdcomApiController::class, 'getBdcomCurrentTemperature']);
     Route::get('/bdcoms', [\App\Http\Controllers\Api\BdcomApiController::class, 'getBdcoms']);
+
+
     Route::get('/get_temps', [\App\Http\Controllers\Api\BdcomApiController::class, 'getTemperaturesFromDB']);
+    Route::get('/get_data_for_temps_graphs', [\App\Http\Controllers\Api\TemperatureGraphController::class, 'getTemperatureData']);
+
     Route::get('/netping_camera/{id}', [CameraController::class, 'getCamera']);
 
     //Route::get('/temp/{id}', [\App\Http\Controllers\Api\BdcomController::class, 'getTemperature']);
