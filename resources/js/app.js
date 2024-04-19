@@ -9,7 +9,6 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
-import vueApexcharts from "vue3-apexcharts";
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -34,7 +33,6 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(Toast, options)
-            .use(vueApexcharts)
             .use(ZiggyVue)
             .mount(el)
     },
