@@ -8,7 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-
+import HighchartsVue from 'highcharts-vue';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -34,6 +34,7 @@ createInertiaApp({
             .use(plugin)
             .use(Toast, options)
             .use(ZiggyVue)
+            .use(HighchartsVue)
             .mount(el)
     },
     progress: {
