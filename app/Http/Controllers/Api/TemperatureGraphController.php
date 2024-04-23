@@ -16,37 +16,76 @@ class TemperatureGraphController extends Controller
     }
     public function getTemperatureData()
     {
+        $period = \request('period', "%d.%m.%Y %H:%i");
         $bdcom_names = Bdcom::select('id', 'bdcom_name')->get();
 
         $data = [];
-        $date = [];
-        $temp = [];
+
         foreach ($bdcom_names as $b) {
-            $temps = Temperature::where('bdcom_id', $b->id)
+            $temps = Temperature::query()
+                ->where('bdcom_id', $b->id)
+                ->where('temperature', '!=', 0)
+                ->selectRaw('temperature as temp, DATE_FORMAT(created_at, "' . $period . '") as date')
+                ->groupBy('date')
                 ->get();
-
+            $date = [];
+            $temp = [];
             foreach ($temps as $t) {
-
-                $date[] = $t->created_at->format("d-m-Y H-i-s");
-                $temp[] = $t->temperature;
-
+                $date[] = $t->date;
+                $temp[] = $t->temp;
             }
-            //dd($temperature);
 
-            $data[] = [
+            $data[] = (object)[
                 'bdcom_name' => $b->bdcom_name,
                 'options' => [
-                    'xaxis' => [
+                    'chart' => [
+                        'animations' => [
+                            'enabled' => false,
+                            'dynamicAnimation' => [
+                                'enabled' => false
+                            ]
+                        ],
+                        'toolbar' => [
+                            'show' => false
+                        ],
+                    ],
+                    'title' => [
+                        'text' => $b->bdcom_name
+                    ],
+                    'grid' => [
+                        'strokeDashArray' => 2
+                    ],
+                    'colors' => [
+                        '#ec4176'
+                    ],
+                    'stroke' => [
+                        'width' => 3,
+                        'curve' => 'smooth'
+                    ],
+                    'xAxis' => [
+                        'axisBorder' => [
+                            'show' => false,
+                        ],
+                        'axisTicks' => [
+                            'show' => false,
+                        ],
                         'categories' => $date
                     ],
-                    'series' => [
-                        'data' => $temp
-                    ]
-                ]
+                    'yAxis' => [
+                        'title' => [
+                            'text' => 'Температура'
+                        ],
+                    ],
+                    'series' => [[
+                        'name' => $b->bdcom_name,
+                        'data' => $temp,
+                    ]]
+                ],
+
 
             ];
         }
 
-        return response()->json($data)->getData();
+        return response()->json($data);
     }
 }
