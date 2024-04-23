@@ -17,8 +17,8 @@
                         </select>
                 </div>
                 </div>
-                <div class="mt-6" v-if="temperatureData.length">
-                    <div v-for="data in temperatureData">
+                <div class="mt-6" v-if="temperatureData">
+                    <div v-for="data in temperatureData.graphs">
                         <span class="text-gray-800 dark:text-gray-200">{{ data.bdcom_name }}</span>
                         <div class="box grow">
                             <highcharts v-if="data.options" :options="data.options" :redraw-on-update="true"></highcharts>
