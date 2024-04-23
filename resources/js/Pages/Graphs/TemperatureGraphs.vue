@@ -38,7 +38,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import useTemperatureGraphs from "@/Composables/TemperatureGraphs/TemperatureGraphs.js";
 import HighchartsVue from 'highcharts-vue';
 import {onMounted, watch} from "vue";
-
+import { TailwindPagination } from 'laravel-vue-pagination';
 const { temperatureData, period, getTemperatureDataForGraphs } = useTemperatureGraphs();
 
 
