@@ -17,7 +17,7 @@ class TemperatureGraphController extends Controller
     public function getTemperatureData()
     {
         $period = \request('period', "%d.%m.%Y %H:%i");
-        $bdcom_names = Bdcom::select('id', 'bdcom_name')->get();
+        $bdcom_names = Bdcom::select('id', 'bdcom_name')->paginate(5);
 
         $data = [];
 
@@ -86,6 +86,9 @@ class TemperatureGraphController extends Controller
             ];
         }
 
-        return response()->json($data);
+        return response()->json([
+            'bdcoms' => $bdcom_names,
+            'graphs' => $data
+        ]);
     }
 }
