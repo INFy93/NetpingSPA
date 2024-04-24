@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('weeks_temperatures', function (Blueprint $table) {
             $table->id();
+            $table->integer('bdcom_id');
+            $table->integer('temperature');
             $table->timestamps();
         });
     }
