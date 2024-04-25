@@ -1,5 +1,5 @@
 import {ref} from "vue";
-import useGraphOptions from "@/Composables/TemperatureGraphs/GraphOptions.js";
+
 export default function useTemperatureGraphs()
 {
     const temperatureData = ref([]);
