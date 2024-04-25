@@ -15,54 +15,34 @@ class TemperatureService
     public function makeTemperaturesArray($collection = null, $group = 1): array
     {
         $temperatures = $collection->toArray();
+        $grouped = [];
 
-        usort($temperatures, function($a, $b){
-            if (isset($a['bdcom']['netping_id']) && isset($b['bdcom']['netping_id']) )
-            {
-                return ($a['bdcom']['netping_id'] - $b['bdcom']['netping_id']);
-            }
-        });
+        if ($group == 1) {
+            $grouped = array_group_by($temperatures, function ($row) {
+                return $row['bdcom'] != null ? $row['bdcom']['netping_id'] : 'no_netping';
+            });
+            ksort($grouped);
+        } else {
+            usort($temperatures, function ($a, $b) {
+                return ($a['bdcom_id'] - $b['bdcom_id']);
+            });
+            $grouped = $temperatures;
+        }
 
         $data = [];
 
-        foreach ($temperatures as $key => $value) {
-            if ($group == 1)
-            {
-                if (($key - 1) >=0 && $value['bdcom']
-                    && $temperatures[$key - 1]['bdcom'] != null
-                    && $temperatures[$key - 1]['bdcom']['netping_id'] == $value['bdcom']['netping_id'])
-                    {
-
-                    $data[] = array(
-                        'bdcom1_temp' => intval($temperatures[$key - 1]['temperature']),
-                        'bdcom2_temp' => intval($value['temperature']),
-                        'netping_id' => $value['bdcom']['netping_id'],
-                        'bdcom_id' => $value['bdcom_id'],
-                        'key' => $key
-                    );
-                    unset($data[$key - 1]);
-                } else if ($value['bdcom'] != null)
-                {
-                    $data[] = array(
-                        'bdcom1_temp' => intval($value['temperature']),
-                        'netping_id' => $value['bdcom']['netping_id'],
-                        'bdcom_id' => $value['bdcom_id'],
-                        'key' => $key
-                    );
+        foreach ($grouped as $key => $value) {
+            if ($group = 1) {
+                if ($key != 'no_netping') {
+                    $data[] = $value;
                 }
-            } else
-            {
-                $data[] = array(
-                    'bdcom1_temp' => intval($value['temperature']),
-                    'netping_id' => $value['bdcom'] != null ? $value['bdcom']['netping_id'] : $value['bdcom']['netping_id'] = null,
-                    'bdcom_id' => $value['bdcom_id'],
-                    'key' => $key
-                );
+            } else {
+                $data[] = $value;
             }
+
         }
-        if ($group == 0)
-        {
-            usort($data, function($a, $b){
+        if ($group == 0) {
+            usort($data, function ($a, $b) {
                 return ($a['bdcom_id'] - $b['bdcom_id']);
             });
         }
@@ -106,15 +86,14 @@ class TemperatureService
         $arrayToDB = [];
         $range = Carbon::now()->subMinutes($multiper);
 
-        $data = Temperature::select(DB::raw('from_unixtime(CEIL(unix_timestamp(created_at) / (60*' . $multiper .')) * 60 * ' . $multiper .') as date, CEIL(AVG(temperature)) as temp'), 'bdcom_id', 'created_at')
+        $data = Temperature::select(DB::raw('from_unixtime(CEIL(unix_timestamp(created_at) / (60*' . $multiper . ')) * 60 * ' . $multiper . ') as date, CEIL(AVG(temperature)) as temp'), 'bdcom_id', 'created_at')
             ->where('temperature', '!=', 0)
             ->whereDateBetween('created_at', $range, Carbon::now())
             ->groupBy('bdcom_id', 'date')
             ->orderBy('created_at', 'desc')
             ->limit($bdcom_count)
             ->get();
-        foreach ($data as $d)
-        {
+        foreach ($data as $d) {
             $arrayToDB[] = [
                 'bdcom_id' => $d->bdcom_id,
                 'temperature' => $d->temp,
@@ -123,18 +102,15 @@ class TemperatureService
             ];
         }
 
-        usort($arrayToDB, function($a, $b){
+        usort($arrayToDB, function ($a, $b) {
             return ($a['bdcom_id'] - $b['bdcom_id']);
         });
 
-        if ($multiper == 30)
-        {
+        if ($multiper == 30) {
             WeeksTemperatures::insert($arrayToDB);
-        } else if ($multiper == 120)
-        {
+        } else if ($multiper == 120) {
             MonthTemperatures::insert($arrayToDB);
-        } else if ($multiper == 720)
-        {
+        } else if ($multiper == 720) {
             YearTemperatures::insert($arrayToDB);
         }
 
