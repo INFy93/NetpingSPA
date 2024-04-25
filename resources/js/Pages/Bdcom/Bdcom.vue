@@ -44,16 +44,16 @@
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
                 <span v-if="temps[index] !== undefined && temps[index]['bdcom_id'] === bdcom.id">
 
-                                            <NormalTemp v-if="temps[index]['bdcom1_temp'] <= 69">{{
-                                                    temps[index]['bdcom1_temp']
+                                            <NormalTemp v-if="temps[index]['temperature'] <= 69">{{
+                                                    temps[index]['temperature']
                                                 }}</NormalTemp>
                                             <WarningTemp
-                                                v-else-if="temps[index]['bdcom1_temp'] >= 70 && temps[index]['bdcom1_temp'] <= 74">{{
-                                                    temps[index]['bdcom1_temp']
+                                                v-else-if="temps[index]['temperature'] >= 70 && temps[index]['bdcom1_temp'] <= 74">{{
+                                                    temps[index]['temperature']
                                                 }}</WarningTemp>
                                             <DangerTemp
-                                                v-else-if="temps[index]['bdcom1_temp'] >= 75">{{
-                                                    temps[index]['bdcom1_temp']
+                                                v-else-if="temps[index]['temperature'] >= 75">{{
+                                                    temps[index]['temperature']
                                                 }}</DangerTemp>
                                         </span>
                 <span

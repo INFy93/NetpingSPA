@@ -177,33 +177,13 @@
                                         </span>
                                     </td>
                                     <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                                        <span v-if="temps[index] !== undefined && (temps[index]['netping_id'] || temps[index]['netping_id'] === point.id)">
-                                            <NormalTemp v-if="temps[index]['bdcom1_temp'] <= 69">{{
-                                                    temps[index]['bdcom1_temp']
-                                                }}</NormalTemp>
-                                            <WarningTemp
-                                                v-else-if="temps[index]['bdcom1_temp'] >= 70 && temps[index]['bdcom1_temp'] <= 74">{{
-                                                    temps[index]['bdcom1_temp']
-                                                }}</WarningTemp>
-                                            <DangerTemp
-                                                v-else-if="temps[index]['bdcom1_temp'] >= 75">{{
-                                                    temps[index]['bdcom1_temp']
-                                                }}</DangerTemp>
-                                        </span>
-                                                    <span
-                                                        v-if="temps[index] !== undefined && temps[index]['netping_id'] === point.id && temps[index]['bdcom2_temp']">
-                                            /
-                                            <NormalTemp v-if="temps[index]['bdcom2_temp'] <= 69">{{
-                                                    temps[index]['bdcom2_temp']
-                                                }}</NormalTemp>
-                                            <WarningTemp
-                                                v-else-if="temps[index]['bdcom2_temp'] >= 70 && temps[index]['bdcom2_temp'] <= 74">{{
-                                                    temps[index]['bdcom2_temp']
-                                                }}</WarningTemp>
-                                            <DangerTemp
-                                                v-else-if="temps[index]['bdcom2_temp'] >= 75">{{
-                                                    temps[index]['bdcom2_temp']
-                                                }}</DangerTemp>
+                                        <span v-if="temps[index] !== undefined && temps[index][0].bdcom.netping_id === point.id">
+                                            <span v-for="(temp, i) in temps[index]">
+                                                <NormalTemp v-if="temp.temperature <= 69">{{ temp.temperature }}</NormalTemp>
+                                                <WarningTemp v-else-if="temp.temperature >= 70 && temp.temperature <= 74">{{ temp.temperature }}</WarningTemp>
+                                                <DangerTemp v-else-if="temp.temperature >= 75">{{ temp.temperature }}</DangerTemp>
+                                                <span v-if="Object.keys(temps[index]).length >= 1 && i !==Object.keys(temps[index]).length - 1"> / </span>
+                                            </span>
                                         </span>
                                         <span
                                             class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">T°</span>
