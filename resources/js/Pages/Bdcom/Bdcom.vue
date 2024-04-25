@@ -42,7 +42,6 @@
             </td>
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-                {{bdcom.id}}
                 <span v-if="temps[index] !== undefined && temps[index]['bdcom_id'] === bdcom.id">
 
                                             <NormalTemp v-if="temps[index]['bdcom1_temp'] <= 69">{{

@@ -3,16 +3,19 @@ import useGraphOptions from "@/Composables/TemperatureGraphs/GraphOptions.js";
 export default function useTemperatureGraphs()
 {
     const temperatureData = ref([]);
-    const period = ref("%d.%m.%Y %H:%i")
+    const period = ref("daily")
+    const bdcomData = ref({});
 
-    const getTemperatureDataForGraphs = async() => {
-        let response = await axios.get("/api/get_data_for_temps_graphs?period=" + period.value);
+    const getTemperatureDataForGraphs = async(page = 1) => {
+        let response = await axios.get("/api/get_data_for_temps_graphs?page=" + page + "&period=" + period.value );
         temperatureData.value = response.data;
+        bdcomData.value = temperatureData.value.bdcoms;
     }
 
     return {
         temperatureData,
         period,
+        bdcomData,
         getTemperatureDataForGraphs
     }
 }

@@ -12,22 +12,31 @@
                         <label for="devices" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Период</label>
                         <select name="devices" id="devices" v-model="period"
                                 class="block w-full mt-1 border-gray-300 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <option value="%d.%m.%Y %H:%i" selected>Дни и часы</option>
-                            <option value="%d.%m.%Y" selected>Дни</option>
+                            <option value="daily" selected>Сутки</option>
+                            <option value="weekly" selected>Неделя</option>
+                            <option value="monthly" selected>Месяц</option>
+                            <option value="year" selected>Год</option>
                         </select>
+                        <TailwindPagination v-if="temperatureData.bdcoms"
+                            :data="bdcomData"
+                            @pagination-change-page="getTemperatureDataForGraphs"
+                                            class="mt-2"
+                                            :item-classes="['bg-white text-gray-600 border-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200']"
+                                            :active-classes="['bg-blue-50 border-blue-500 text-blue-600 dark:bg-gray-400 dark:border-gray-300 dark:text-gray-200']"
+                        />
                 </div>
                 </div>
                 <div class="mt-6" v-if="temperatureData">
-                    <div v-for="data in temperatureData.graphs">
-                        <span class="text-gray-800 dark:text-gray-200">{{ data.bdcom_name }}</span>
-                        <div class="box grow">
-                            <highcharts v-if="data.options" :options="data.options" :redraw-on-update="true"></highcharts>
+                    <div v-for="(data, index) in temperatureData.graphs">
+                        <div >
+                            <div class="box grow mt-6" >
+                                <highcharts :class="{ 'mt-20' : index === 0 }" v-if="data.options" :options="data.options" :redraw-on-update="true"></highcharts>
+                            </div>
                         </div>
+
                     </div>
                 </div>
-
             </div>
-
         </div>
     </AuthenticatedLayout>
 </template>
@@ -39,7 +48,7 @@ import useTemperatureGraphs from "@/Composables/TemperatureGraphs/TemperatureGra
 import HighchartsVue from 'highcharts-vue';
 import {onMounted, watch} from "vue";
 import { TailwindPagination } from 'laravel-vue-pagination';
-const { temperatureData, period, getTemperatureDataForGraphs } = useTemperatureGraphs();
+const { temperatureData, period, bdcomData, getTemperatureDataForGraphs } = useTemperatureGraphs();
 
 
 onMounted(async () => {
