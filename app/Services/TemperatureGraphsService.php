@@ -9,6 +9,7 @@ use App\Models\WeeksTemperatures;
 use App\Models\YearTemperatures;
 use Carbon\Carbon;
 
+
 class TemperatureGraphsService
 {
     public function getTemperatureGraphsData($period): \Illuminate\Http\JsonResponse
@@ -31,71 +32,22 @@ class TemperatureGraphsService
         };
 
         foreach ($bdcom_names as $b) {
+
                 $temps = $table->query()
                     ->selectRaw('temperature as temp, DATE_FORMAT(created_at, "' . $range['format'] . '") as date')
                     ->where('bdcom_id', $b->id)
-                    ->where('temperature', '!=', 0)
-                    ->whereDateBetween('created_at', $range['dateRange'], Carbon::now())
+                    ->whereDateBetween('created_at', $range['dateRange'], Carbon::now()->format('Y-m-d H:i:s'))
                     ->groupBy('date', 'bdcom_id')
                     ->get();
-
 
             $date = [];
             $temp = [];
             foreach ($temps as $t) {
                 $date[] = $t->date;
-                $temp[] = $t->temp;
+                $temp[] = $t->temp == 0 ? null : $t->temp;
             }
-
-            $data[] = (object)[
-                'bdcom_name' => $b->bdcom_name,
-                'options' => [
-                    'chart' => [
-                        'animations' => [
-                            'enabled' => false,
-                            'dynamicAnimation' => [
-                                'enabled' => false
-                            ]
-                        ],
-                        'toolbar' => [
-                            'show' => false
-                        ],
-                    ],
-                    'title' => [
-                        'text' => $b->bdcom_name
-                    ],
-                    'grid' => [
-                        'strokeDashArray' => 2
-                    ],
-                    'colors' => [
-                        '#ec4176'
-                    ],
-                    'stroke' => [
-                        'width' => 3,
-                        'curve' => 'smooth'
-                    ],
-                    'xAxis' => [
-                        'axisBorder' => [
-                            'show' => false,
-                        ],
-                        'axisTicks' => [
-                            'show' => false,
-                        ],
-                        'categories' => $date
-                    ],
-                    'yAxis' => [
-                        'title' => [
-                            'text' => 'Температура'
-                        ],
-                    ],
-                    'series' => [[
-                        'name' => $b->bdcom_name,
-                        'data' => $temp,
-                    ]]
-                ],
-
-
-            ];
+            $options = new TemperatureGraphOptions($b->bdcom_name, $date, $temp);
+            $data[] = $options->graphOptions();
         }
 
         return response()->json([

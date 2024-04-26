@@ -55,27 +55,20 @@ class TemperatureService
     {
         return match ($period) {
             'daily' => [
-                'dateRange' => Carbon::now()->subDay(),
+                'dateRange' =>Carbon::now()->subHours(24)->format('Y-m-d H:i:s'),
                 'format' => "%Y-%m-%d %H:%i:%s",
-                'avg' => false,
             ],
             'weekly' => [
-                'dateRange' => Carbon::now()->subDays(7),
+                'dateRange' => Carbon::now()->subDays(7)->format('Y-m-d H:i'),
                 'format' => "%Y-%m-%d %H:%i",
-                'avg' => true,
-                'multiper' => 30
             ],
             'monthly' => [
                 'dateRange' => Carbon::now()->subDays(30),
                 'format' => "%Y-%m-%d %H:%i",
-                'avg' => true,
-                'multiper' => 120
             ],
             'year' => [
                 'dateRange' => Carbon::now()->subDays(365),
                 'format' => "%Y-%m-%d",
-                'avg' => true,
-                'multiper' => 1440
             ],
         };
     }
