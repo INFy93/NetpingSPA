@@ -97,8 +97,8 @@ class TemperatureService
             $arrayToDB[] = [
                 'bdcom_id' => $d->bdcom_id,
                 'temperature' => $d->temp,
-                'created_at' => $d->created_at,
-                'updated_at' => $d->created_at,
+                'created_at' => date("Y-m-d H:i:s"),
+                'updated_at' => date("Y-m-d H:i:s"),
             ];
         }
 
