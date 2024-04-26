@@ -11,6 +11,6 @@ class MonthTemperatures extends Model
 
     public function scopeWhereDateBetween($query,$fieldName,$fromDate,$todate)
     {
-        return $query->whereDate($fieldName,'>=',$fromDate)->whereDate($fieldName,'<=',$todate);
+        return $query->where($fieldName,'>=',$fromDate)->where($fieldName,'<=',$todate);
     }
 }
