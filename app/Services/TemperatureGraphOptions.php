@@ -58,10 +58,12 @@ class TemperatureGraphOptions
                     'title' => [
                         'text' => 'Температура (°С)'
                     ],
-                    'plotBands' => [[
+                    'plotBands' => [
+                        [
                             'from' => 0,
                             'to' => 69,
                             'color' =>  '#86efac',
+                        ],
                         [
                             'from' => 70,
                             'to' => 74,
@@ -72,7 +74,7 @@ class TemperatureGraphOptions
                             'to' => 200,
                             'color' =>  '#e53935',
                         ],
-                    ]],
+                    ],
                 ],
                 'tooltip' => [
                     'valueSuffix' => ' °С'
