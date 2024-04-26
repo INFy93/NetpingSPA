@@ -70,7 +70,7 @@ class TemperatureGraphOptions
                         [
                             'from' => 75,
                             'to' => 200,
-                            'color' =>  '#ffa726',
+                            'color' =>  '#e53935',
                         ],
                     ]],
                 ],
