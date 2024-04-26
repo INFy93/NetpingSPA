@@ -26,3 +26,24 @@ Schedule::call(function ()
     }
     Temperature::insert($tempsToDB);
 })->cron('04,09,14,19,24,29,34,39,44,49,54,59 * * * *');
+
+Schedule::call(function ()
+{
+    $weekFill = new \App\Services\TemperatureService();
+
+    $weekFill->fillAvgTable(30);
+})->cron('02,32 * * * *');
+
+Schedule::call(function ()
+{
+    $weekFill = new \App\Services\TemperatureService();
+
+    $weekFill->fillAvgTable(120);
+})->cron('0 */2 * * *');
+
+Schedule::call(function ()
+{
+    $weekFill = new \App\Services\TemperatureService();
+
+    $weekFill->fillAvgTable(720);
+})->cron('01 */12 * * *');
