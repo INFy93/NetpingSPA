@@ -17,38 +17,39 @@ class TemperatureService
         $temperatures = $collection->toArray();
         $grouped = [];
 
+        //dd($temperatures);
+
         if ($group == 1) {
             $grouped = array_group_by($temperatures, function ($row) {
-                return $row['bdcom'] != null ? $row['bdcom']['netping_id'] : 'no_netping';
+                return $row['netping'] != null ? $row['netping']['id'] :  'no_netping';
             });
             ksort($grouped);
         } else {
-            usort($temperatures, function ($a, $b) {
+            usort($temperatures['data'], function ($a, $b) {
                 return ($a['bdcom_id'] - $b['bdcom_id']);
             });
             $grouped = $temperatures;
         }
 
-        $data = [];
+        //dd($grouped);
 
-        foreach ($grouped as $key => $value) {
-            if ($group = 1) {
-                if ($key != 'no_netping') {
+        $data = [];
+        if ($group == 1) {
+            foreach ($grouped as $key => $value) {
+                if ($key != 'no_netping')
                     $data[] = $value;
-                }
-            } else {
-                $data[] = $value;
             }
 
-        }
-        if ($group == 0) {
-            usort($data, function ($a, $b) {
+            $result = array_values($data);
+        } else
+        {
+            usort($temperatures['data'], function ($a, $b) {
                 return ($a['bdcom_id'] - $b['bdcom_id']);
             });
+            $result = $temperatures;
         }
 
-
-        return array_values($data);
+        return $result;
     }
 
     public function formatDateRange($period): array

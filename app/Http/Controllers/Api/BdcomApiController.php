@@ -28,23 +28,34 @@ class BdcomApiController extends Controller
                 ->with(['netping' => function ($query) {
                     $query->select('id', 'name', 'bdcom_id');
                 }])
-                ->get()
+                ->paginate(10)
         );
     }
 
     public function getTemperaturesFromDB()
     {
         $group = \request('group', 1);
+        $isPaginate = \request('isPaginate', 0);
         $bdcoms_count = Bdcom::select('id', 'bdcom_ip', 'netping_id')->count();
-        $temperatures = Temperature::with('bdcom')
+
+        $query = Temperature::with(['bdcom',
+                'netping' => function($q) {
+                    $q->select('id', 'name');
+                }
+            ])
             ->select('bdcom_id', 'temperature')
             ->orderBy('created_at', 'desc')
             ->limit($bdcoms_count)
             ->get();
 
+        $temperatures = $isPaginate == 0 ? $query : $query->sortBy('bdcom_id')->paginate(10);
+       // dd($temperatures);
+
+
         $format_data = new TemperatureService();
 
         $data = $format_data->makeTemperaturesArray($temperatures, $group);
+
 
         return response()->json($data)->getData();
 
