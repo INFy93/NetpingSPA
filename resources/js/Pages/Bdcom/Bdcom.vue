@@ -21,39 +21,38 @@
         </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-500 dark:divide-gray-600">
-        <tr v-for="(bdcom, index) in bdcoms">
+        <tr v-for="data in temps.data">
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-            {{ bdcom.bdcom_name }}
+                {{ data.bdcom.bdcom_name }}
                 <span
                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Имя</span>
             </td>
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-                {{ bdcom.bdcom_ip }}
+                {{ data.bdcom.bdcom_ip }}
                 <span
                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">IP</span>
             </td>
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-                {{ bdcom.netping[0] === undefined ? "-" : bdcom.netping[0].name }}
+                {{ data.netping === null ? "-" : data.netping.name }}
                 <span
                     class="lg:hidden absolute top-0 left-0 bg-blue-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold uppercase">Точка</span>
             </td>
             <td
                 class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-left border border-b block lg:table-cell relative lg:static">
-                <span v-if="temps[index] !== undefined && temps[index]['bdcom_id'] === bdcom.id">
-
-                                            <NormalTemp v-if="temps[index]['temperature'] <= 69">{{
-                                                    temps[index]['temperature']
+                <span>
+                                            <NormalTemp v-if="data.temperature <= 69">{{
+                                                    data.temperature
                                                 }}</NormalTemp>
                                             <WarningTemp
-                                                v-else-if="temps[index]['temperature'] >= 70 && temps[index]['bdcom1_temp'] <= 74">{{
-                                                    temps[index]['temperature']
+                                                v-else-if="data.temperature >= 70 && data.temperature <= 74">{{
+                                                    data.temperature
                                                 }}</WarningTemp>
                                             <DangerTemp
-                                                v-else-if="temps[index]['temperature'] >= 75">{{
-                                                    temps[index]['temperature']
+                                                v-else-if="data.temperature >= 75">{{
+                                                    data.temperature
                                                 }}</DangerTemp>
                                         </span>
                 <span
@@ -61,25 +60,35 @@
             </td>
         </tr>
         </tbody>
-
     </table>
+    <TailwindPagination v-if="temps"
+                        :active-classes="['bg-blue-50 border-blue-500 text-blue-600 dark:bg-gray-400 dark:border-gray-300 dark:text-gray-200']"
+                        :data="temps"
+                        :item-classes="['bg-white text-gray-600 border-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200']"
+                        class="mt-2"
+                        @pagination-change-page="changePage"
+    />
 </template>
 
 <script setup>
-import useBdcoms from "@/Composables/Bdcom/bdcom.js";
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
+import {TailwindPagination} from 'laravel-vue-pagination';
 import WarningTemp from "@/Components/Temperatures/WarningTemp.vue";
 import NormalTemp from "@/Components/Temperatures/NormalTemp.vue";
 import DangerTemp from "@/Components/Temperatures/DangerTemp.vue";
 
 
-const {bdcoms, getBdcoms} = useBdcoms();
 const {temps, getBdcomTemps} = useBdcomTemperatures();
+const index = ref(0);
 
 onMounted(async () => {
-    await getBdcoms();
-    await getBdcomTemps(0);
+    await getBdcomTemps(0, 1);
 })
-setInterval(getBdcomTemps(0), 300000);
+const changePage = async () => {
+    const page = event.target.innerHTML;
+    await getBdcomTemps(0, 1, page);
+}
+
+setInterval(getBdcomTemps(0, 1), 300000);
 </script>

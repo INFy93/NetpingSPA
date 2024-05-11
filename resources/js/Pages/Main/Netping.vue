@@ -177,7 +177,7 @@
                                         </span>
                                     </td>
                                     <td class="w-full lg:w-auto p-3 text-gray-800 dark:text-gray-100 text-center border border-b block lg:table-cell relative lg:static">
-                                        <span v-if="temps[index] !== undefined && temps[index][0].bdcom.netping_id === point.id">
+                                        <span v-if="temps[index] !== undefined && temps[index][0].netping.id === point.id">
                                             <span v-for="(temp, i) in temps[index]">
                                                 <NormalTemp v-if="temp.temperature <= 69">{{ temp.temperature }}</NormalTemp>
                                                 <WarningTemp v-else-if="temp.temperature >= 70 && temp.temperature <= 74">{{ temp.temperature }}</WarningTemp>
@@ -194,7 +194,7 @@
 
                         </TabPanel>
                         <TabPanel>
-                            <Bdcom :temp = temps></Bdcom>
+                            <Bdcom></Bdcom>
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>
