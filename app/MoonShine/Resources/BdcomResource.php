@@ -7,6 +7,7 @@ namespace App\MoonShine\Resources;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Bdcom;
 
+use MoonShine\Fields\Checkbox;
 use MoonShine\Fields\Relationships\BelongsTo;
 use MoonShine\Fields\Relationships\BelongsToMany;
 use MoonShine\Fields\Text;
@@ -40,6 +41,7 @@ class BdcomResource extends ModelResource
                 ID::make()->sortable(),
                 Text::make('Имя', 'bdcom_name'),
                 Text::make('IP', 'bdcom_ip'),
+                Checkbox::make('Серверная?', 'is_server'),
                 BelongsToMany::make('Точка', 'netping', resource: new NetpingResource())->nullable(),
             ]),
         ];
