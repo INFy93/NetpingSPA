@@ -9,6 +9,11 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="relative h-10 w-72 min-w-[200px]">
                     <div class="mb-8">
+                        <div class="flex flex-row space-x-2">
+                            <PrimaryButton @click="isServer = 0">Все</PrimaryButton>
+                            <PrimaryButton @click="isServer = 1">Серверная</PrimaryButton>
+                        </div>
+
                         <label for="devices" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Период</label>
                         <select name="devices" id="devices" v-model="period"
                                 class="block w-full mt-1 border-gray-300 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -30,7 +35,7 @@
                     <div v-for="(data, index) in temperatureData.graphs">
                         <div >
                             <div class="box grow mt-6" >
-                                <highcharts :class="{ 'mt-20' : index === 0 }" v-if="data.options" :options="data.options" :redraw-on-update="true"></highcharts>
+                                <highcharts :class="{ 'mt-[7rem]' : index === 0 }" v-if="data.options" :options="data.options" :redraw-on-update="true"></highcharts>
                             </div>
                         </div>
 
@@ -44,11 +49,12 @@
 <script setup>
 import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 import useTemperatureGraphs from "@/Composables/TemperatureGraphs/TemperatureGraphs.js";
 import HighchartsVue from 'highcharts-vue';
 import {onMounted, watch} from "vue";
 import { TailwindPagination } from 'laravel-vue-pagination';
-const { temperatureData, period, bdcomData, getTemperatureDataForGraphs } = useTemperatureGraphs();
+const { temperatureData, period, isServer, bdcomData, getTemperatureDataForGraphs } = useTemperatureGraphs();
 
 
 onMounted(async () => {
@@ -57,6 +63,10 @@ onMounted(async () => {
 
 watch(period, async () =>{
     await getTemperatureDataForGraphs()
+})
+
+watch(isServer, async () => {
+    await  getTemperatureDataForGraphs()
 })
 
 </script>
