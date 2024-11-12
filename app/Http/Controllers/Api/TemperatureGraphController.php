@@ -15,8 +15,6 @@ class TemperatureGraphController extends Controller
     {
         $period = \request('period', "daily");
 
-        $is_server = \request('is_server', 0);
-
         $graphHelper = new TemperatureGraphsService();
 
         return $graphHelper->getTemperatureGraphsData($period);
