@@ -12,9 +12,14 @@ use Carbon\Carbon;
 
 class TemperatureGraphsService
 {
-    public function getTemperatureGraphsData($period): \Illuminate\Http\JsonResponse
+    public function getTemperatureGraphsData($period, $is_server): \Illuminate\Http\JsonResponse
     {
-        $bdcom_names = Bdcom::select('id', 'bdcom_name')->paginate(5);
+        $filter = $is_server == 0 ? '' : 1;
+        $bdcom_names = Bdcom::select('id', 'bdcom_name')
+            ->when($filter, function ($query) use ($filter) {
+                $query->where('is_server', $filter);
+            })
+            ->paginate(5);
 
         $data = [];
 
