@@ -34,6 +34,8 @@ class BdcomResource extends ModelResource
 
     protected bool $detailInModal = true;
 
+    protected int $itemsPerPage = 10;
+
     public function fields(): array
     {
         return [
