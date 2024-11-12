@@ -10,10 +10,10 @@ use NotificationChannels\Telegram\TelegramMessage;
 
 class Telegram extends Notification
 {
-    public $user_name;
-    public $telegram_user_id;
-    public $netping_name;
-    public $state;
+    public string $user_name;
+    public int $telegram_user_id;
+    public string $netping_name;
+    public string $state;
     public $date;
     public $time;
 
