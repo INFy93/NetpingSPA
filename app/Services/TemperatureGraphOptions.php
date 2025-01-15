@@ -20,7 +20,7 @@ class TemperatureGraphOptions
             'bdcom_name' => $this->bdcomName,
             'options' => [
                 'chart' => [
-                    'type' => 'spline',
+                    //'type' => 'spline',
                     'animations' => [
                         'enabled' => false,
                         'dynamicAnimation' => [
@@ -79,15 +79,33 @@ class TemperatureGraphOptions
                 'tooltip' => [
                     'valueSuffix' => ' °С'
                 ],
-                'series' => [[
-                    'name' => $this->bdcomName,
-                    'data' => $this->temperatures,
-                ]],
                 'plotOptions' => [
                     'series' => [
                         'connectNulls' => true,
-                    ]
+                    ],
+                    'area' => [
+                        'lineWidth' => 1,
+
+
+                    ],
                 ],
+                'series' => [[
+                    'color' => [
+                        'linearGradient' => [
+                            'x1' => 0,
+                            'y1' => 0,
+                            'x2' => 0,
+                            'y2' => 1
+                        ],
+                        'stops' => [
+                            [0, 'rgb(199, 113, 243)'],
+                            [1, 'rgb(76, 175, 254)']
+                        ],
+                    ],
+                    'type' => 'area',
+                    'name' => $this->bdcomName,
+                    'data' => $this->temperatures,
+                ]],
             ],
 
         ];
