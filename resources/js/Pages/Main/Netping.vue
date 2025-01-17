@@ -231,7 +231,7 @@
                                                                                      style="width: 24px; margin: 0 auto;"/></span>
                                         <div v-else>
                                             <Success v-if="power[index][2] === '0'">220V</Success>
-                                            <Danger v-else-if="power[index][2] === '1'">220V OFF</Danger>
+                                            <Danger v-else-if="power[index][2] === '1'">220V</Danger>
                                             <NoData v-else-if="power[index][2] === '3'">N/A</NoData>
                                         </div>
 
@@ -321,7 +321,10 @@
                 </TabGroup>
             </div>
             <Modal :show="openingCameraModal" @close="closeModal" max-width="camera">
-                <img :src="cameraData" alt="camera">
+                <div v-if="cameraData.length === 0">TEST</div>
+                <div v-else>
+                    <img :src="cameraData" alt="camera">
+                </div>
             </Modal>
         </div>
     </AuthenticatedLayout>
