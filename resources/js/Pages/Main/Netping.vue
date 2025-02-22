@@ -301,14 +301,25 @@
                                         </span>
                                         </span>
                                     </div>
-                                    <span
-                                        @click="switchSecureStatus(point.id)"
-                                        class="cursor-pointer inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
+                                    <div class="flex flex-row">
+                                        <span
+                                            @click="switchSecureStatus(point.id)"
+                                            class="cursor-pointer inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
                                         <span
                                             v-if="secure.secure_data !== undefined && (secure.secure_data[index] === '1' || secure.secure_data[index] === 'direction:2')">Снять с охраны</span>
                                        <span
                                            v-else-if="secure.secure_data !== undefined && (secure.secure_data[index] === '0' || secure.secure_data[index] === 'direction:1')">Поставить на охрану</span>
                                        </span>
+                                        <span
+                                            @click="switchVentStatus(point.id)"
+                                            v-if="vent[index] !== undefined && point.id === vent[index].id && vent[index].state[2] !== '3'"
+                                            class="flex justify-end ml-auto cursor-pointer inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-800 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-800">
+                                             <span v-if="vent[index].state[2] === '0'">Вентилятор OFF</span>
+                                            <span v-else-if="vent[index].state[2] === '1'">Вентилятор ON</span>
+                                      </span>
+
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -339,6 +350,7 @@ import useNetpingStates from "@/Composables/NetpingStates/NetpingStates.js";
 import useBdcomTemperatures from "@/Composables/BdcomTemperature/BdcomTemperature.js";
 import useSecure from "@/Composables/Secure/Secure.js";
 import useCamera from "@/Composables/Camera/Camera.js";
+import useVent from "@/Composables/Vent/Vent.js";
 import Success from "@/Components/States/Success.vue";
 import Danger from "@/Components/States/Danger.vue";
 import NoData from "@/Components/States/NoData.vue";
@@ -355,7 +367,19 @@ defineProps({
 const url = route('secure');
 
 const {switchAlarm} = useSecure();
-const {powerState, doorState, alarmState, secureState, power, door, alarm, secure} = useNetpingStates();
+const {switchVent} = useVent();
+const {
+    powerState,
+    doorState,
+    alarmState,
+    secureState,
+    ventState,
+    power,
+    door,
+    alarm,
+    secure,
+    vent
+} = useNetpingStates();
 const {temps, getBdcomTemps} = useBdcomTemperatures();
 const {cameraData, getCameraImage} = useCamera();
 
@@ -367,6 +391,7 @@ onMounted(async () => {
     await secureState();
     await doorState();
     await alarmState();
+    await ventState();
     await getBdcomTemps(1);
 })
 const openCameraModal = async (id) => {
@@ -384,6 +409,11 @@ const closeModal = () => {
 const switchSecureStatus = async (id) => {
     await switchAlarm(id);
     await secureState();
+}
+
+const switchVentStatus = async (id) => {
+    await switchVent(id);
+    await ventState();
 }
 
 setInterval(powerState, 20000);

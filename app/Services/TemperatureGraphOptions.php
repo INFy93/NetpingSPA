@@ -14,6 +14,7 @@ class TemperatureGraphOptions
         $this->dateArray = $dates;
         $this->temperatures = $temps;
     }
+
     public function graphOptions(): object
     {
         return (object)[
@@ -62,17 +63,17 @@ class TemperatureGraphOptions
                         [
                             'from' => 0,
                             'to' => 69,
-                            'color' =>  '#86efac',
+                            'color' => '#86efac',
                         ],
                         [
                             'from' => 70,
                             'to' => 74,
-                            'color' =>  '#ffa726',
+                            'color' => '#ffa726',
                         ],
                         [
                             'from' => 75,
                             'to' => 200,
-                            'color' =>  '#e53935',
+                            'color' => '#e53935',
                         ],
                     ],
                 ],

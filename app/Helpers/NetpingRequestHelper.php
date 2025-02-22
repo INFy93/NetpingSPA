@@ -89,6 +89,60 @@ function get_alarm_state($netping_ips): array
     return $a_state;
 }
 
+function get_vent_state($netping_ips): array
+{
+    $v_state = [];
+    $nonNullRequests = [];
+
+    // Собираем элементы, для которых существует адрес (vent_state)
+    foreach ($netping_ips as $vent) {
+        if ($vent->vent_state !== null) {
+            $nonNullRequests[] = $vent;
+        }
+    }
+
+    // Выполняем запросы через pool
+    $responses = Http::pool(function (Pool $pool) use ($nonNullRequests) {
+        $requests = [];
+        foreach ($nonNullRequests as $vent) {
+            $requests[] = $pool->withOptions([
+                'connect_timeout' => 0.2
+            ])->retry(3, 100, function ($exp) {
+                return $exp instanceof ConnectionException;
+            })->get($vent->vent_state);
+        }
+        return $requests;
+    });
+
+    // Используем отдельный счетчик для ответов из пула
+    $responseIndex = 0;
+    foreach ($netping_ips as $vent) {
+        // Если у точки есть адрес, то у него должен быть ответ из пула
+        if ($vent->vent_state !== null) {
+            if (isset($responses[$responseIndex]) && !$responses[$responseIndex] instanceof ConnectionException) {
+                $v_state[] = [
+                    'id' => $vent->id,
+                    'state' => explode(", ", $responses[$responseIndex])
+                ];
+            } else {
+                $v_state[] = [
+                    'id' => $vent->id,
+                    'state' => ['0', '0', '3']
+                ];
+            }
+            $responseIndex++;
+        } else {
+            // Если адрес отсутствует – подставляем стандартное значение
+            $v_state[] = [
+                'id' => $vent->id,
+                'state' => ['0', '0', '3']
+            ];
+        }
+    }
+
+    return $v_state;
+}
+
 function get_netping_state($netping_ips): array
 {
     $s_state = [];
@@ -154,5 +208,22 @@ function get_single_door_state($netping_ip): string
     $door_state = explode(", ", $raw_door_state);
 
     return $door_state[2];
+}
+
+function get_single_vent_state($netping_ip): string
+{
+    if (isset($netping_ip)) {
+        try {
+            $raw_vent_state = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
+        } catch (ConnectionException $exp) {
+            return '3';
+        }
+    } else {
+        return '3';
+    }
+
+    $vent_state = explode(", ", $raw_vent_state);
+
+    return $vent_state[2];
 }
 

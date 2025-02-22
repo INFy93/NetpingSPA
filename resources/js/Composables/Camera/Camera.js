@@ -1,8 +1,7 @@
 import {ref} from "vue";
 
-export default function useCamera()
-{
-    const cameraData = ref();
+export default function useCamera() {
+    const cameraData = ref("");
 
     const getCameraImage = async (id) => {
         cameraData.value = "";

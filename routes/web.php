@@ -10,18 +10,17 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/',  function () {
-    if(Auth::check()) {
+Route::get('/', function () {
+    if (Auth::check()) {
         return redirect('/netping');
-    }
-    else {
+    } else {
         return Inertia::render('Auth/Login');
     }
 })->name('enter');
 
-Route::middleware('auth')->group( function () {
-   Route::resource('netping', \App\Http\Controllers\NetpingController::class);
-    Route::get('clear', function() {
+Route::middleware('auth')->group(function () {
+    Route::resource('netping', \App\Http\Controllers\NetpingController::class);
+    Route::get('clear', function () {
         return Artisan::call('optimize:clear');
     });
 });
@@ -36,6 +35,8 @@ Route::middleware('auth')->group(function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
     Route::get('/power', [NetpingApiController::class, 'get_power_data']);
     Route::get('/secure', [NetpingApiController::class, 'get_secure_data'])->name('secure');
+    Route::get('/vent', [NetpingApiController::class, 'get_vent_data']);
+    Route::get('/vent/set/{id}', [NetpingApiController::class, 'switchVent']);
     Route::get('/door', [NetpingApiController::class, 'get_door_data']);
     Route::get('/alarm', [NetpingApiController::class, 'get_alarm_data']);
     Route::get('/alarm/set/{id}', [NetpingApiController::class, 'switchAlarm']);
@@ -51,6 +52,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'api'], function () {
 
     //Route::get('/temp/{id}', [\App\Http\Controllers\Api\BdcomController::class, 'getTemperature']);
 
+    Route::get('/storage-link', function () {
+        $command = 'storage:link';
+        $result = Artisan::call($command);
+        return Artisan::output();
+    });
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
