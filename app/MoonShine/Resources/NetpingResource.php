@@ -92,11 +92,11 @@ class NetpingResource extends ModelResource
                             config('netping.alarm_state_v4')),
                     'netping_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.netping_state') :
                             config('netping.netping_state_v4')),
-                    'vent_state' => config('netping.vent_state_v4'),
+                    'vent_state' => config('netping.netping_login') . $value . config('netping.vent_state_v4'),
                     'alarm_control' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_control') :
                             config('netping.alarm_control_v4')),
                     'alarm_switch_v4' => $revision == 4 ? config('netping.netping_login') . $value . config('netping.alarm_switch_v4') : '',
-                    'vent_switch_v4' => config('netping.vent_switch_v4')
+                    'vent_switch_v4' => config('netping.netping_login') . $value . config('netping.vent_switch_v4')
                 ];
                 foreach ($params as $key => $value) //fill fields using helper array and foreach loop
                 {
