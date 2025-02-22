@@ -54,7 +54,7 @@ class NetpingResource extends ModelResource
                 Text::make('Название', 'name'),
                 Text::make('IP', 'ip'),
                 BelongsToMany::make('BDCOM', 'bdcom',
-                    fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
+                    fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip . ")",
                     resource: new BdcomResource())->columnLabel('IP'),
                 Text::make('Камера', 'camera_ip'),
             ]),
@@ -73,50 +73,54 @@ class NetpingResource extends ModelResource
         return [
             Divider::make('В первую очередь нужно отметить ревизию! По умолчанию ревизия v2.'), //divider
             Checkbox::make('Ревизия (отметить, если v4)', 'revision') //checkbox: selected - revision v4. default - v2
-                ->onValue(4)
+            ->onValue(4)
                 ->offValue(2)
-            ->onChangeMethod('setRevisionToCreateNetpingLinks'), //put revision to session
+                ->onChangeMethod('setRevisionToCreateNetpingLinks'), //put revision to session
             Text::make('Название', 'name'), //name of the netping
             Text::make('IP', 'ip') //ip address: reactive field
-                ->reactive(function(Fields $fields, ?string $value): Fields {
-                    $revision = session('revision') ? session('revision') : 2; //get revision number from session
+            ->reactive(function (Fields $fields, ?string $value): Fields {
+                $revision = session('revision') ? session('revision') : 2; //get revision number from session
                 /*
                  * Helper array: formatting netping links using revision
                  */
-                    $params = [
-                      'power_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.power_state') :
-                              config('netping.power_state_v4')),
-                      'door_state' =>  config('netping.netping_login') . $value . ($revision == 2 ? config('netping.door_state') :
-                              config('netping.door_state_v4')),
-                      'alarm_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_state') :
-                              config('netping.alarm_state_v4')),
-                      'netping_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.netping_state') :
-                              config('netping.netping_state_v4')),
-                      'alarm_control' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_control') :
-                              config('netping.alarm_control_v4')),
-                      'alarm_switch_v4' => $revision == 4 ? config('netping.netping_login') . $value .  config('netping.alarm_switch_v4') : '',
-                    ];
-                    foreach ($params as $key => $value) //fill fields using helper array and foreach loop
-                    {
-                        $reactive_fields = tap($fields, static fn ($fields) => $fields
+                $params = [
+                    'power_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.power_state') :
+                            config('netping.power_state_v4')),
+                    'door_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.door_state') :
+                            config('netping.door_state_v4')),
+                    'alarm_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_state') :
+                            config('netping.alarm_state_v4')),
+                    'netping_state' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.netping_state') :
+                            config('netping.netping_state_v4')),
+                    'vent_state' => config('netping.vent_state_v4'),
+                    'alarm_control' => config('netping.netping_login') . $value . ($revision == 2 ? config('netping.alarm_control') :
+                            config('netping.alarm_control_v4')),
+                    'alarm_switch_v4' => $revision == 4 ? config('netping.netping_login') . $value . config('netping.alarm_switch_v4') : '',
+                    'vent_switch_v4' => config('netping.vent_switch_v4')
+                ];
+                foreach ($params as $key => $value) //fill fields using helper array and foreach loop
+                {
+                    $reactive_fields = tap($fields, static fn($fields) => $fields
                         ->findByColumn($key)
                         ?->setValue($value)->value());
-                    }
-                    return $reactive_fields;
                 }
+                return $reactive_fields;
+            }
             ),
             Text::make('Камера', 'camera_ip'), //camera ip. not required
             BelongsToMany::make('BDCOM', 'bdcom',
-                fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip .")",
+                fn($item) => $item->bdcom_name . " (" . $item->bdcom_ip . ")",
                 resource: new BdcomResource())
                 ->selectMode()->creatable(),
             Divider::make('Ссылки на управление точкой (заполняются автоматически)'), //divider for section with netping links
             Text::make('Статус питания', 'power_state')->reactive(), //power state link
             Text::make('Статус двери', 'door_state')->reactive(), //door state link
             Text::make('Статус сирены', 'alarm_state')->reactive(), //alarm state link
+            Text::make('Статус вентилятора', 'vent_state')->reactive(), //vent state link
             Text::make('Состояние охраны', 'netping_state')->reactive(), //secure state link
             Text::make('Управление охраной', 'alarm_control')->reactive(), //secure on/off link
             Text::make('Отключение сирены (только v4)', 'alarm_switch_v4')->reactive(), //alarm on/off link (for revision v4)
+            Text::make('Управление вентилятором', 'vent_switch_v4')->reactive() //vent on/off link
         ];
     }
 
