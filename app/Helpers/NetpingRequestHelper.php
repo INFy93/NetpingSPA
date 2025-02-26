@@ -140,44 +140,64 @@ class NetpingHttpService
     public function getVentState(iterable $netpingIps): array
     {
         $v_state = [];
-        $nonNullItems = [];
+        $requests = [];
+        $mapping = [];
 
-        // Собираем элементы, у которых определён адрес vent_state
+        // Собираем точки с непустым vent_state
         foreach ($netpingIps as $item) {
             if ($item->vent_state !== null) {
-                $nonNullItems[] = $item;
-            }
-        }
-
-        $responses = $this->performPoolRequest($nonNullItems, function ($item) {
-            return $item->vent_state;
-        });
-
-        // Переиспользуем оригинальный порядок: если у точки vent_state отсутствует – возвращаем дефолтное значение
-        $responseIndex = 0;
-        foreach ($netpingIps as $item) {
-            if ($item->vent_state !== null) {
-                if (isset($responses[$responseIndex]) && !$responses[$responseIndex] instanceof ConnectionException) {
-                    $v_state[] = [
-                        'id' => $item->id,
-                        'state' => explode(", ", $responses[$responseIndex]->body())
-                    ];
-                } else {
-                    $v_state[] = [
-                        'id' => $item->id,
-                        'state' => ['0', '0', '3']
-                    ];
-                }
-                $responseIndex++;
+                $mapping[$item->id] = $item;
+                $requests[] = $item;
             } else {
-                $v_state[] = [
+                // Если адрес отсутствует, сразу записываем дефолтное значение
+                $v_state[$item->id] = [
                     'id' => $item->id,
                     'state' => ['0', '0', '3']
                 ];
             }
         }
-        return $v_state;
+
+        if (count($requests)) {
+            // Для вент запросов задаем свои параметры (например, меньший таймаут и меньше повторов)
+            $responses = Http::pool(function (\Illuminate\Http\Client\Pool $pool) use ($requests) {
+                $reqs = [];
+                foreach ($requests as $item) {
+                    $reqs[] = $pool->withOptions([
+                        'connect_timeout' => 0.1  // уменьшенный таймаут для вент запросов
+                    ])
+                        ->retry(1, 50, function ($exp) {
+                            return $exp instanceof \Illuminate\Http\Client\ConnectionException;
+                        })
+                        ->get($item->vent_state);
+                }
+                return $reqs;
+            });
+
+            $i = 0;
+            foreach ($requests as $item) {
+                if (isset($responses[$i]) && !$responses[$i] instanceof \Illuminate\Http\Client\ConnectionException) {
+                    $v_state[$item->id] = [
+                        'id' => $item->id,
+                        'state' => explode(", ", $responses[$i]->body())
+                    ];
+                } else {
+                    $v_state[$item->id] = [
+                        'id' => $item->id,
+                        'state' => ['0', '0', '3']
+                    ];
+                }
+                $i++;
+            }
+        }
+
+        // Собираем итоговый массив в том же порядке, что и входной
+        $ordered = [];
+        foreach ($netpingIps as $item) {
+            $ordered[] = $v_state[$item->id];
+        }
+        return $ordered;
     }
+
 
     /**
      * Получить состояние охраны для одной точки.
