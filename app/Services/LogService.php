@@ -14,22 +14,32 @@ class LogService
 {
     public function logging($netping_id, $netping_name, $action): void
     {
-        $users = User::all();
+        $users = User::select('id', 'telegram_user_id', 'order_email')->get();
+        $current_user = Auth::user();
+        $current_date = date('Y-m-d');
+        $current_time = date('H:i:s');
+
         $log = new Log();
 
-        $state = $action == 1 ? 'Снята с охраны' : 'Поставлена на охрану';
+        $state = '';
 
-        $log->user_id = Auth::id();
+        match ($action) {
+            1 => $state = 'Cнята с охраны',
+            2 => $state = 'Поставлена на охрану',
+            3 => $state = 'Включен вентилятор',
+            4 => $state = 'Отключен вентилятор',
+            default => 'Ошибка: не получено действие!'
+        };
+
+        $log->user_id = $current_user->id;
         $log->netping_id = $netping_id;
         $log->action_id = $action;
         $log->save();
 
         foreach ($users as $user) {
             if ($user->telegram_user_id)
-           dispatch(new QueueSenderTelegram($user, Auth::user()->name, $user->telegram_user_id, $netping_name, $state, date('Y-m-d'), date('H:i:s')));
-            if ($user->order_email == 1) {
-                dispatch(new QueueSenderEmail($user->email, Auth::user()->name, $netping_name, $state, date('H:i:s'), date('Y-m-d')));
-            }
+                dispatch(new QueueSenderTelegram($user, $current_user->name, $user->telegram_user_id, $netping_name, $state, $current_date, $current_time));
         }
     }
 }
+

@@ -49,7 +49,7 @@ class Telegram extends Notification
 
         return TelegramMessage::create()
             // Markdown supported.
-            ->content("*Точка " . $this->netping_name . " " . mb_strtolower($this->state) . "*\n")
+            ->content("*Точка " . $this->netping_name . ": " . mb_strtolower($this->state) . "*\n")
             ->line("\n")
             ->line("*Дата:*" . " " . $this->date)
             ->line("*Время:*" . " " . $this->time)

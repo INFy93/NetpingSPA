@@ -22,6 +22,7 @@ class LogMail extends Mailable
     public $state;
     public $time;
     public $date;
+
     public function __construct($user, $netping, $state, $time, $date)
     {
         $this->user = $user;
@@ -38,7 +39,7 @@ class LogMail extends Mailable
     {
         return new Envelope(
             from: new Address('notify@netping.crimeastar.net', 'NetPing Notify'),
-            subject: 'Точка '.$this->netping.' '.mb_strtolower($this->state),
+            subject: 'Точка ' . $this->netping . ': ' . mb_strtolower($this->state),
         );
     }
 
