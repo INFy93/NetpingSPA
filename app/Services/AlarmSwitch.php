@@ -5,25 +5,26 @@ namespace App\Services;
 use App\Models\Netping;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-use function App\Helpers\get_single_secure_state;
-use function App\Helpers\get_single_door_state;
 
 class AlarmSwitch
 {
     protected mixed $timeout;
+    protected NetpingHttpService $netpingHttpService;
 
-    public function __construct()
+    public function __construct(NetpingHttpService $netpingHttpService)
     {
         $this->timeout = env('NETPING_TIMEOUT');
+        $this->netpingHttpService = $netpingHttpService;
     }
 
     public function setAlarm($netping_id)
     {
         $logService = new LogService();
         $netping = Netping::find($netping_id);
-        $secure_status = get_single_secure_state($netping->netping_state);
+        // Используем новый сервис для получения secure state
+        $secure_status = $this->netpingHttpService->getSingleSecureState($netping->netping_state);
 
-        // Если ревизия равна 4, передаём уже полученную модель
+        // Если ревизия равна 4, передаём модель в метод setAlarmv4
         if ($netping->revision == 4) {
             return $this->setAlarmv4($netping, $secure_status);
         }
@@ -44,13 +45,13 @@ class AlarmSwitch
                 }
                 break;
             case 'direction:1': // точка не на охране – ставим на охрану
-                $door_state = get_single_door_state($netping->door_state);
+                // Получаем состояние двери через новый сервис
+                $door_state = $this->netpingHttpService->getSingleDoorState($netping->door_state);
                 if ($door_state == 1) {
                     // Если дверь открыта, ставить на охрану нельзя
                     $status = 4;
                     break;
                 }
-
                 try {
                     $raw_state = $this->sendRequest($netping->alarm_control . '2');
                 } catch (ConnectionException $exp) {
@@ -68,7 +69,6 @@ class AlarmSwitch
             default:
                 $status = 3;
         }
-
         return response()->json($status)->getData();
     }
 
@@ -90,7 +90,6 @@ class AlarmSwitch
                 } catch (ConnectionException $exp) {
                     return 3;
                 }
-
                 $result = $this->parseResponse($turn_off);
                 if ($result === 'ok') {
                     $logService->logging($netping->id, $netping->name, 1);
@@ -100,7 +99,7 @@ class AlarmSwitch
                 }
                 break;
             case '0': // точка снята с охраны – исправляем ситуацию
-                $door_state = get_single_door_state($netping->door_state);
+                $door_state = $this->netpingHttpService->getSingleDoorState($netping->door_state);
                 if ($door_state == 1) {
                     return 4;
                 }

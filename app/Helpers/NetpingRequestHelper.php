@@ -1,229 +1,247 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services;
 
-use GuzzleHttp\Promise\Utils;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
 
-function get_power_state($netping_ips): array
+class NetpingHttpService
 {
-    //состояние питания
-    $p_state = [];
-    $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        foreach ($netping_ips as $power) {
-            $pool
-                ->withOptions([
-                    'connect_timeout' => 0.2
-                ])
-                ->retry(3, 100, function ($exp) use ($pool) {
-                    return $pool instanceof \Illuminate\Http\Client\ConnectionException;
-                })
-                ->get($power->power_state);
-        }
-    });
-    foreach ($responses as $r) {
-        if (!$r instanceof ConnectionException) {
-            $p_state[] = explode(", ", $r);
-        } else {
-            $p_state[] = ['0', '0', '3'];
-        }
+    protected float $timeout;
+    protected int $retryTimes;
+    protected int $retryDelay;
 
-    }
-    return $p_state;
-}
-
-function get_door_state($netping_ips): array
-{
-    //состояние двери
-    $d_state = [];
-    $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        foreach ($netping_ips as $door) {
-            $pool
-                ->withOptions([
-                    'connect_timeout' => 0.2
-                ])
-                ->retry(3, 100, function ($exp) use ($pool) {
-                    return $pool instanceof \Illuminate\Http\Client\ConnectionException;
-                })
-                ->get($door->door_state);
-
-        }
-    });
-    foreach ($responses as $r) {
-        if (!$r instanceof ConnectionException) {
-            $d_state[] = explode(", ", $r);
-        } else {
-            $d_state[] = ['0', '0', '3'];
-        }
-
-    }
-    return $d_state;
-}
-
-function get_alarm_state($netping_ips): array
-{
-    //состояние сирены
-    $a_state = [];
-    $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        foreach ($netping_ips as $alram) {
-            $pool
-                ->withOptions([
-                    'connect_timeout' => 0.2
-                ])
-                ->retry(3, 100, function ($exp) use ($pool) {
-                    return $pool instanceof \Illuminate\Http\Client\ConnectionException;
-                })
-                ->get($alram->alarm_state);
-        }
-    });
-    foreach ($responses as $r) {
-        if (!$r instanceof ConnectionException) {
-            $a_state[] = explode(", ", $r);
-        } else {
-            $a_state[] = ['0', '0', '3'];
-        }
-    }
-    return $a_state;
-}
-
-function get_vent_state($netping_ips): array
-{
-    $v_state = [];
-    $nonNullRequests = [];
-
-    // Собираем элементы, для которых существует адрес (vent_state)
-    foreach ($netping_ips as $vent) {
-        if ($vent->vent_state !== null) {
-            $nonNullRequests[] = $vent;
-        }
+    public function __construct()
+    {
+        // Можно задать таймаут по умолчанию (или брать из конфигурации)
+        $this->timeout = 0.2;
+        $this->retryTimes = 3;
+        $this->retryDelay = 100; // миллисекунды
     }
 
-    // Выполняем запросы через pool
-    $responses = Http::pool(function (Pool $pool) use ($nonNullRequests) {
-        $requests = [];
-        foreach ($nonNullRequests as $vent) {
-            $requests[] = $pool->withOptions([
-                'connect_timeout' => 0.2
-            ])->retry(3, 100, function ($exp) {
-                return $exp instanceof ConnectionException;
-            })->get($vent->vent_state);
-        }
-        return $requests;
-    });
+    /**
+     * Приватный метод для выполнения pool-запросов.
+     * $items — массив объектов, $urlCallback — функция, возвращающая URL для запроса.
+     */
+    private function performPoolRequest(iterable $items, callable $urlCallback): array
+    {
+        return Http::pool(function (Pool $pool) use ($items, $urlCallback) {
+            $requests = [];
+            foreach ($items as $item) {
+                $url = $urlCallback($item);
+                if ($url) {
+                    $requests[] = $pool->withOptions([
+                        'connect_timeout' => $this->timeout
+                    ])
+                        ->retry($this->retryTimes, $this->retryDelay, function ($exp) {
+                            return $exp instanceof ConnectionException;
+                        })
+                        ->get($url);
+                }
+            }
+            return $requests;
+        });
+    }
 
-    // Используем отдельный счетчик для ответов из пула
-    $responseIndex = 0;
-    foreach ($netping_ips as $vent) {
-        // Если у точки есть адрес, то у него должен быть ответ из пула
-        if ($vent->vent_state !== null) {
-            if (isset($responses[$responseIndex]) && !$responses[$responseIndex] instanceof ConnectionException) {
-                $v_state[] = [
-                    'id' => $vent->id,
-                    'state' => explode(", ", $responses[$responseIndex])
-                ];
+    /**
+     * Получить состояние питания для набора точек.
+     */
+    public function getPowerState(iterable $netpingIps): array
+    {
+        $responses = $this->performPoolRequest($netpingIps, function ($item) {
+            return $item->power_state;
+        });
+
+        $p_state = [];
+        foreach ($responses as $r) {
+            if (!$r instanceof ConnectionException) {
+                $p_state[] = explode(", ", $r->body());
+            } else {
+                $p_state[] = ['0', '0', '3'];
+            }
+        }
+        return $p_state;
+    }
+
+    /**
+     * Получить состояние двери для набора точек.
+     */
+    public function getDoorState(iterable $netpingIps): array
+    {
+        $responses = $this->performPoolRequest($netpingIps, function ($item) {
+            return $item->door_state;
+        });
+
+        $d_state = [];
+        foreach ($responses as $r) {
+            if (!$r instanceof ConnectionException) {
+                $d_state[] = explode(", ", $r->body());
+            } else {
+                $d_state[] = ['0', '0', '3'];
+            }
+        }
+        return $d_state;
+    }
+
+    /**
+     * Получить состояние сирены для набора точек.
+     */
+    public function getAlarmState(iterable $netpingIps): array
+    {
+        $responses = $this->performPoolRequest($netpingIps, function ($item) {
+            return $item->alarm_state;
+        });
+
+        $a_state = [];
+        foreach ($responses as $r) {
+            if (!$r instanceof ConnectionException) {
+                $a_state[] = explode(", ", $r->body());
+            } else {
+                $a_state[] = ['0', '0', '3'];
+            }
+        }
+        return $a_state;
+    }
+
+    /**
+     * Получить состояние Netping для набора точек.
+     */
+    public function getNetpingState(iterable $netpingIps): array
+    {
+        $responses = $this->performPoolRequest($netpingIps, function ($item) {
+            return $item->netping_state;
+        });
+
+        $s_state = [];
+        foreach ($responses as $r) {
+            if (!$r instanceof ConnectionException) {
+                $body = $r->body();
+                if (strlen($body) == 1) {
+                    $s_state[] = iconv("ascii", "utf-8", $body);
+                } else {
+                    $netping_state = iconv("windows-1251", "utf-8", $body);
+                    $netping_state = Str::after($netping_state, "data=");
+                    $netping_state = Str::remove(";", $netping_state);
+                    $netping_state = explode(",", $netping_state);
+                    $s_state[] = $netping_state[19] ?? '3';
+                }
+            } else {
+                $s_state[] = '3';
+            }
+        }
+        return $s_state;
+    }
+
+    /**
+     * Получить состояние вентилятора для набора точек.
+     */
+    public function getVentState(iterable $netpingIps): array
+    {
+        $v_state = [];
+        $nonNullItems = [];
+
+        // Собираем элементы, у которых определён адрес vent_state
+        foreach ($netpingIps as $item) {
+            if ($item->vent_state !== null) {
+                $nonNullItems[] = $item;
+            }
+        }
+
+        $responses = $this->performPoolRequest($nonNullItems, function ($item) {
+            return $item->vent_state;
+        });
+
+        // Переиспользуем оригинальный порядок: если у точки vent_state отсутствует – возвращаем дефолтное значение
+        $responseIndex = 0;
+        foreach ($netpingIps as $item) {
+            if ($item->vent_state !== null) {
+                if (isset($responses[$responseIndex]) && !$responses[$responseIndex] instanceof ConnectionException) {
+                    $v_state[] = [
+                        'id' => $item->id,
+                        'state' => explode(", ", $responses[$responseIndex]->body())
+                    ];
+                } else {
+                    $v_state[] = [
+                        'id' => $item->id,
+                        'state' => ['0', '0', '3']
+                    ];
+                }
+                $responseIndex++;
             } else {
                 $v_state[] = [
-                    'id' => $vent->id,
+                    'id' => $item->id,
                     'state' => ['0', '0', '3']
                 ];
             }
-            $responseIndex++;
-        } else {
-            // Если адрес отсутствует – подставляем стандартное значение
-            $v_state[] = [
-                'id' => $vent->id,
-                'state' => ['0', '0', '3']
-            ];
         }
+        return $v_state;
     }
 
-    return $v_state;
-}
-
-function get_netping_state($netping_ips): array
-{
-    $s_state = [];
-    $responses = Http::pool(function (Pool $pool) use ($netping_ips) {
-        foreach ($netping_ips as $secure) {
-            $pool
-                ->withOptions([
-                    'connect_timeout' => 0.2
-                ])
-                ->retry(3, 100, function ($exp) use ($pool) {
-                    return $pool instanceof \Illuminate\Http\Client\ConnectionException;
+    /**
+     * Получить состояние охраны для одной точки.
+     */
+    public function getSingleSecureState(string $netpingIp): string
+    {
+        try {
+            $r = Http::timeout($this->timeout)
+                ->retry($this->retryTimes, $this->retryDelay, function ($exp) {
+                    return $exp instanceof ConnectionException;
                 })
-                ->get($secure->netping_state);
-        }
-    });
-    foreach ($responses as $r) {
-        if (!$r instanceof ConnectionException) {
-            if (strlen($r->body()) == 1) {
-                $s_state[] = iconv("ascii", "utf-8", $r->body());
+                ->get($netpingIp);
+            $body = $r->body();
+            if (strlen($body) == 1) {
+                $state = iconv("ascii", "utf-8", $body);
             } else {
-                $netping_state = iconv("windows-1251", "utf-8", $r->body());
+                $netping_state = iconv("windows-1251", "utf-8", $body);
                 $netping_state = Str::after($netping_state, "data=");
                 $netping_state = Str::remove(";", $netping_state);
                 $netping_state = explode(",", $netping_state);
-                $s_state[] = $netping_state[19];
+                $state = $netping_state[19] ?? '3';
             }
-        } else {
-            $s_state[] = '3';
+        } catch (ConnectionException $exp) {
+            $state = '3';
         }
-
-    }
-    return $s_state;
-}
-
-function get_single_secure_state($netping_ip): false|string
-{
-    $r = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
-
-    if (!$r instanceof ConnectionException) {
-        if (strlen($r->body()) == 1) {
-            $state = iconv("ascii", "utf-8", $r->body());
-        } else {
-            $netping_state = iconv("windows-1251", "utf-8", $r->body());
-            $netping_state = Str::after($netping_state, "data=");
-            $netping_state = Str::remove(";", $netping_state);
-            $netping_state = explode(",", $netping_state);
-            $state = $netping_state[19];
-        }
-    } else {
-        $state = '3';
+        return $state;
     }
 
-    return $state;
-}
-
-function get_single_door_state($netping_ip): string
-{
-    try {
-        $raw_door_state = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
-    } catch (ConnectionException $exp) {
-        return '3';
-    }
-    $door_state = explode(", ", $raw_door_state);
-
-    return $door_state[2];
-}
-
-function get_single_vent_state($netping_ip): string
-{
-    if (isset($netping_ip)) {
+    /**
+     * Получить состояние двери для одной точки.
+     */
+    public function getSingleDoorState(string $netpingIp): string
+    {
         try {
-            $raw_vent_state = Http::timeout(env('NETPING_TIMEOUT'))->get($netping_ip);
+            $r = Http::timeout($this->timeout)
+                ->retry($this->retryTimes, $this->retryDelay, function ($exp) {
+                    return $exp instanceof ConnectionException;
+                })
+                ->get($netpingIp);
+            $door_state = explode(", ", $r->body());
+            return $door_state[2] ?? '3';
         } catch (ConnectionException $exp) {
             return '3';
         }
-    } else {
-        return '3';
     }
 
-    $vent_state = explode(", ", $raw_vent_state);
-
-    return $vent_state[2];
+    /**
+     * Получить состояние вентилятора для одной точки.
+     */
+    public function getSingleVentState(?string $netpingIp): string
+    {
+        if (!$netpingIp) {
+            return '3';
+        }
+        try {
+            $r = Http::timeout($this->timeout)
+                ->retry($this->retryTimes, $this->retryDelay, function ($exp) {
+                    return $exp instanceof ConnectionException;
+                })
+                ->get($netpingIp);
+            $vent_state = explode(", ", $r->body());
+            return $vent_state[2] ?? '3';
+        } catch (ConnectionException $exp) {
+            return '3';
+        }
+    }
 }
-
